@@ -1,7 +1,7 @@
 <h3>L'ultime Bot pour Don Quijote ou Don quixote ou Metamorphy...</h3>
 <h4>! Python 3.9.13 !</h4>
 
-<p>les scripts :< br/>
+<p>les scripts :
   <ul>
     <li>install pour installer l'environnement virtuel, sinon utiliser le fichier requirement</li>
     <li>start Editor pour démarrer l'éditeur</li>
@@ -15,10 +15,10 @@
   Surtout pour le bot où il y a des couleurs c'est plus pratique pour comprendre ce qu'il se passe.
 </p>
 <p>
-  Dans l'éditeur, en cliquant sur paramètre puis load project, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un save du projet en cours.<br/>
+  Dans l'éditeur, en cliquant sur <code>paramètres</code> puis <code>load project</code>, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un <code>save as...</code> du projet en cours.<br/>
   On peut y changer la voix, la langue, le modèle mistral...</p>
 <p>
-  Pour le son, il faut recopier le contenu du répertoire son de Dom Juan, envoi séparé par mail également.<br/>
+  Pour le son, il faut recopier le contenu du répertoire son de Dom Juan, envoi séparé par mail.<br/>
   Il faut aussi créer un répertoire "secret" avec les codes d'api mistal & google, envoi séparé par mail également
 </p>
 <p>
