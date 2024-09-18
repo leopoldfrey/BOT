@@ -11,9 +11,9 @@
 </p>
 
 <p>
-  Pour utiliser les scripts ps1, il faut installer <a href='https://learn.microsoft.com/fr-fr/powershell/scripting/install/installing-  powershell-on-macos?view=powershell-7.4#installation-via-direct-download' target='_blank'>powershell</a>.<br/>
-  Puis en associant l'extension ps1 avec le terminal (toujours ouvrir avec...), on peut double-cliquer dessus pour démarrer.<br/>
-  Surtout pour le bot où il y a des couleurs c'est plus pratique pour comprendre ce qu'il se passe.
+  Pour utiliser les scripts ps1, il faut installer <a href='https://learn.microsoft.com/fr-fr/powershell/scripting/install/installing-  powershell-on-macos?view=powershell-7.4#installation-via-direct-download' target='_blank'>powershell</a>. ça fait la même chose que les scripts shell mais en associant l'extension ps1 avec le terminal (toujours ouvrir avec...), on peut double-cliquer dessus pour démarrer.<br/>
+  Et surtout pour le bot où il y a des couleurs c'est plus pratique pour comprendre ce qu'il se passe.<br/>
+Et surtout pour l'ordi sous XP c'est nécessaire.  
 </p>
 <p>
   Dans l'éditeur, en cliquant sur <code>paramètres</code> puis <code>load project</code>, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un <code>save as...</code> du projet en cours.<br/>
