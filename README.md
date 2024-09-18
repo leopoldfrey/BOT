@@ -2,7 +2,7 @@
 <h4>! Python 3.9.13 !</h4>
 
 <p>les scripts :
-- install pour installer l'environnement virtuel 
+- install pour installer l'environnement virtuel, sinon utiliser le fichier requirement
 - start Editor pour démarrer l'éditeur
 - start Bot pour démarrer le bot</p>
 
