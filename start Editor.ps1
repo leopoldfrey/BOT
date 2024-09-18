@@ -1,8 +1,9 @@
 #!/usr/bin/env pwsh
-cd $PSScriptRoot
+Set-Location $PSScriptRoot
 
-echo "Entering Virtual Env"
+Write-Output "Entering Virtual Env"
 ./botenv/bin/Activate.ps1
-echo "Starting Editor"
-cd ./Editor
+
+Write-Output "Starting Editor"
+Set-Location ./Editor
 python3 ./Editor.py
