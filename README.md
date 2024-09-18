@@ -1,3 +1,5 @@
+L'ultime Bot pour Don Quijote ou Don quixote ou Metamorphy...
+
 ! Python 3.9.13 !<br/>
 
 les scripts :
@@ -11,3 +13,6 @@ surtout pour le bot où il y a des couleurs c'est plus pratique pour comprendre 
 
 Dans l'éditeur, en cliquant sur paramètre puis load project, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un save du projet en cours
 On peut y changer la voix, la langue, le modèle mistral...
+
+
+<i>Pour l'instant on utilise toujours google pour STT et TTS</i>
