@@ -7,6 +7,7 @@
     <li><code>start Editor</code> pour démarrer l'éditeur</li>
     <li><code>start Bot</code> pour démarrer le bot</li>
   </ul>
+  <i>(ils utilisent tous virtualenv)</i>
 </p>
 
 <p>
