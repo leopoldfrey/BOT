@@ -12,7 +12,7 @@ from deepl_trans import translateFR, translateES, translate
 import functools
 print = functools.partial(print, flush=True)
 
-DEBUG = True
+DEBUG = False
 
 import google.cloud.texttospeech as tts
 
