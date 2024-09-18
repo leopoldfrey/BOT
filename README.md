@@ -15,7 +15,7 @@
   Surtout pour le bot où il y a des couleurs c'est plus pratique pour comprendre ce qu'il se passe.
 </p>
 <p>
-  Dans l'éditeur, en cliquant sur paramètre puis load project, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un save du projet en cours.<br/>
+  Dans l'éditeur, en cliquant sur <code>paramètres</code> puis load project, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un save du projet en cours.<br/>
   On peut y changer la voix, la langue, le modèle mistral...</p>
 <p>
   Pour le son, il faut recopier le contenu du répertoire son de Dom Juan, envoi séparé par mail également.<br/>
