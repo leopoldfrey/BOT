@@ -3,7 +3,7 @@
 
 <p>les scripts :
   <ul>
-    <li><code>install</code> pour installer l'environnement virtuel, sinon utiliser le fichier requirement</li>
+    <li><code>install</code> pour installer l'environnement virtuel, sinon utiliser le fichier <code>requirements.txt</code></li>
     <li><code>start Editor</code> pour démarrer l'éditeur</li>
     <li><code>start Bot</code> pour démarrer le bot</li>
   </ul>
