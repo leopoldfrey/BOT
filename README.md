@@ -1,10 +1,13 @@
 <h3>L'ultime Bot pour Don Quijote ou Don quixote ou Metamorphy...</h3>
 <h4>! Python 3.9.13 !</h4>
 
-<p>les scripts :
-- install pour installer l'environnement virtuel, sinon utiliser le fichier requirement
-- start Editor pour démarrer l'éditeur
-- start Bot pour démarrer le bot</p>
+<p>les scripts :< br/>
+  <ul>
+    <li>install pour installer l'environnement virtuel, sinon utiliser le fichier requirement</li>
+    <li>start Editor pour démarrer l'éditeur</li>
+    <li>start Bot pour démarrer le bot</li>
+  </ul>
+</p>
 
 <p>Pour utiliser les scripts ps1, il faut installer powershell.<br/>
 Puis en associant l'extension ps1 avec le terminal (toujours ouvrir avec...) on peut double-cliquer dessus pour démarrer.<br/>
