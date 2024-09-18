@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <title>Bot</title>
+</head>
+
+<body>
+  <div id='topbar'>
+    <h1 id="botname"></h1>/<h1 id="username"></h1>
+    <label class="switch">
+      <input type="checkbox" name="facedetect" id="facedetect">
+      <span class="slider round"></span>
+    </label> Face Detect
+    <label class="switch">
+      <input type="checkbox" name="phone" id="phone">
+      <span class="slider round"></span>
+    </label> Phone
+    <label class="switch" style='display: none;'>
+      <input type="checkbox" name="on" id="on">
+      <span class="slider round"></span>
+    </label><!-- On-->
+    <label class="switch">
+      <input type="checkbox" name="voice" id="voice">
+      <span class="slider round"></span>
+    </label> Voice
+    <button tname="end" id="end">End</button>
+    <input type="text" id="cant_speak" name="cant_speak" onkeypress="onTextChange();" size="100"><button onclick="sendText();">Send</button>
+  </div>
+  <div id='speech'>
+  </div>
+  <div id='info'>
+    <div id="status" onclick='pause()'>Off</div>
+    <div id="timer" onclick='reset()'>0:00</div>
+    <div id="info2">
+      <span class="info3" id="lang"></span> / <span class="info3" id="dispVoice"></span><br/>
+      <span class="info3" id="model"></span>
+    </div>
+    
+  </div>
+  <script>
+    var DEBUG = true;
+    const statusText = document.getElementById('status');
+    var recognition;
+    
+    function startRecognition() {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          // INIT webkitSpeechRecognition
+          try {
+            recognition = new webkitSpeechRecognition();
+            if (recognition == null) {
+              updateStatus("ERROR: webkitSpeechRecognition not available", "red");
+            } else {
+              updateStatus("Pause", "orange");
+            }
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            if(DEBUG)
+              recognition.lang = "fr-FR";
+            else
+              recognition.lang = lang;
+            //recognition.lang = "en-GB";
+            recognition.onresult = detect;
+            recognition.onend = function(event) {
+              //console.log('recognition: end, restart');
+              try {
+                recognition.start();
+              } catch (e) {}
+              if ($silent == false) {
+                updateStatus("Ready", "green");
+              } else {
+                updateStatus("Pause", "orange");
+              }
+            }
+
+            recognition.onstart = function(event) {
+              //console.log('event: start');
+              if ($silent == false) {
+                updateStatus("Ready", "green");
+              } else {
+                updateStatus("Pause", "orange");
+              }
+            }
+
+            recognition.start();
+
+          } catch (e) {
+            alert('ERROR: webkitSpeechRecognition not available');
+            updateStatus("ERROR: webkitSpeechRecognition not available", "red");
+          }
+
+        })
+        .catch((err) => {
+          console.error(`you got an error: ${err}`);
+        });
+    }
+
+    // Fonction pour mettre à jour l'indicateur de statut
+    function updateStatus(text, color) {
+      statusText.textContent = text;
+      statusText.style.color = color;
+    }
+
+    // INIT VARS
+    var lang = "es-ES";
+    var timer = null;
+    var username = "You";
+    var botname = "Bot";
+    var color = "#FFFFFF";
+    var $silent = false;
+    var $sp = $('#speech');
+    var p;
+
+    $(".speech_you").attr('data-content', username+" : ");
+    $(".speech_bot").attr('data-content', botname+ " : ");
+
+    $timer = $("#timer");
+
+    // INIT WEBSOCKET
+    let socket = new WebSocket("ws://localhost:9001");
+
+    socket.onopen = function(e) {
+      console.log("[open] Connection established");
+      socket.send(JSON.stringify({
+        'command': 'connect'
+      }));
+    };
+
+    socket.onmessage = function(event) {
+      // console.log(`[message] Data received from server: ${event.data}`);
+      data = JSON.parse(event.data);
+      if (data.command == "on") {
+        //console.log("ON", data.value);
+        $("#on").prop("checked", data.value);
+      } else if (data.command == "voices") {
+        //console.log("VOICES", data.value);
+      } else if (data.command == "model") {
+        $("#model").html(data.value)
+      } else if (data.command == "voice") {
+        $("#dispVoice").html(data.value)
+      } else if (data.command == "lang") {
+        //console.log("change language :", data.value);
+        lang = data.value;
+        if(DEBUG)
+          recognition.lang = "fr-FR";
+        else
+          recognition.lang = lang;
+        //console.log($("#lang"));
+        $("#lang").html(lang);
+      } else if (data.command == "phone") {
+        //console.log("PHONE", data.value);
+        $("#phone").prop("checked", data.value);
+      } else if (data.command == "facedetect") {
+        //console.log("FACEDETECT", data.value);
+        $("#facedetect").prop("checked", data.value);
+      } else if (data.command == "message") {
+        console.log("[ws]", data);
+      } else if (data.command == "botname") {
+        botname = data.value;
+        last_bot =  $("#speech").children(".speech_bot").last();
+        last_bot.attr('data-content', botname+ " : ");
+        $("#botname").html(botname);
+        console.log("BOTNAME", botname);
+      } else if (data.command == "username") {
+        username = data.value;
+        last_bot =  $("#speech").children(".speech_you").last();
+        last_bot.attr('data-content', username+ " : ");
+        $("#username").html(username);
+        console.log("USERNAME", username);
+      } else if (data.command == "bot" || data.command == "_bot") {
+        console.log("BOT", data.value);
+        if (!p || p.text() != "") {
+          p = $('<p class="speech_you"></p>');
+          $sp.append(p);
+        }
+        $(p).removeClass("speech_you");
+        $(p).attr('data-content', botname+" : ")
+        $(p).addClass("speech_bot");
+        $(p).css('color', color);
+        $(p).text(data.value);
+        $(p).get(0).scrollIntoView();
+      } else if (data.command == "clear") {
+        $sp.empty();
+      } else if (data.command == "timers") {
+        $timer.html("Interactions : " + data.interactions + " / " + data.maxinter + " " + "<br/>Global : " + convertTime(data.global) + "<br/>Interaction : " + convertTime(data.current));
+      } else if (data.command == "silent") {
+        $silent = data.value;
+        if ($silent) {
+          updateStatus("Pause", "orange");
+        } else {
+          updateStatus("Ready", "green");
+        }
+        //console.log("WEBSOCKET SILENT", $silent)
+        if ($silent == true) {
+          // recognition.stop();
+        } else {
+          p = $('<p class="speech_you"></p>');
+          $sp.append(p);
+          $(".speech_you").attr('data-content', username+" : ");
+          try {
+            recognition.start();
+          } catch (e) {}
+        }
+      } else if (data.command == "_user") {
+        // FOR DISPLAY VERSION
+      } else if (data.command == "_bot") {
+        // FOR DISPLAY VERSION
+      } else if (data.command == "params") {
+        console.log("HERE", typeof(data), data);
+        username = data.username;
+        last_bot =  $("#speech").children(".speech_you").last();
+        last_bot.attr('data-content', username+ " : ");
+        $("#username").html(username);
+        //console.log("USERNAME", username);
+        botname = data.botname;
+        color = data.color;
+        last_bot =  $("#speech").children(".speech_bot").last();
+        last_bot.attr('data-content', botname+ " : ");
+        $("#botname").html(botname);
+        //console.log("BOTNAME", botname);
+        $("#dispVoice").html(data.voice+" (speed :"+data.speed+")");
+        console.log("VOICE", data.voice,"speed", data.speed);
+        $("#model").html(data.model);
+        lang = data.lang;
+        if(DEBUG)
+          recognition.lang = "fr-FR";
+        else
+          recognition.lang = lang;
+        $("#lang").html(lang);
+        console.log("LANG", lang);
+        $("#model").html(data.model);
+        console.log("MODEL", data.model);
+      } else {
+        console.log("[ws]", data);
+      }
+    };
+
+    socket.onclose = function(event) {
+      console.log('[close] Connection closed');
+    };
+
+    socket.onerror = function(error) {
+      console.log(`[error] ${error.message}`);
+    };
+
+    function pause() {
+      socket.send(JSON.stringify({
+        'command': 'pause'
+      }));
+    }
+
+    function reset() {
+      socket.send(JSON.stringify({
+        'command': 'reset'
+      }));
+    }
+
+    function stop() {
+      socket.send(JSON.stringify({
+        'command': 'stop'
+      }));
+    }
+  
+    function convertTime(t) {
+      s = Math.floor(t);
+      ss = s % 60;
+      m = Math.floor(s / 60);
+      // console.log(m, ss);
+      return zeroPad(m, 2) + ":" + zeroPad(ss, 2);
+    }
+
+    function zeroPad(num, places) {
+      var zero = places - num.toString().length + 1;
+      return Array(+(zero > 0 && zero)).join("0") + num;
+    }
+
+    // POLL SPEECH TO TEXT
+    function detect(event) {
+      if (timer != null)
+        clearTimeout(timer);
+
+      for (var i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i][0].confidence < .5)
+          continue;
+        //console.log("result", i, "conf:", event.results[i][0].confidence, "final:", event.results[i].isFinal, "transcript:", event.results[i][0].transcript)
+        if (!$silent) {
+          $(p).text(event.results[i][0].transcript);
+          $(p).get(0).scrollIntoView();
+          if (event.results[i].isFinal) {
+            recognition.stop();
+            console.log("USER", event.results[i][0].transcript);
+            p = $('<p class="speech_bot" data-content="'+botname+' : " style="color: '+color+'"></p>');
+            // $(p).text("...");
+            $sp.append(p);
+          }
+          $.ajax({
+            type: "POST",
+            url: '/reco',
+            data: {
+              transcript: String(event.results[i][0].transcript),
+              confidence: event.results[i][0].confidence,
+              sentence: event.results[i].isFinal ? 1 : 0
+            }
+          });
+        }
+      }
+      timer = setTimeout(function() {
+        recognition.stop();
+        timer = null;
+      }, 5000);
+    }
+
+    // POLL FUNCTION FOR TIMERS
+    setInterval(function() {
+      $.ajax({
+        type: "GET",
+        url: '/poll',
+        success: function(data) {
+          // console.log(data);
+          if (data.restart == true) {
+            window.location.reload(false);
+          }
+        }
+      });
+    }, 100);
+
+    $("#phone").change(function() {
+      // console.log($("#phone").prop('checked'));
+      $silent = !$("#phone").prop('checked');
+      if ($silent) {
+        updateStatus("Pause","orange");
+      } else {
+        updateStatus("Ready","green");
+      }
+      socket.send(JSON.stringify({
+        'command': 'phone',
+        'phone': $("#phone").prop('checked') ? 1 : 0
+      }));
+    });
+
+    $("#facedetect").change(function() {
+      socket.send(JSON.stringify({
+        'command': 'facedetect',
+        'facedetect': $("#facedetect").prop('checked') ? 1 : 0
+      }));
+    });
+
+    $("#end").click(function() {
+      socket.send(JSON.stringify({
+        'command': 'end'
+      }));
+    })
+
+    $("#voice").change(function() {
+      socket.send(JSON.stringify({
+        'command': 'voice',
+        'voice': $("#voice").prop('checked') ? 1 : 0
+      }));
+    });
+
+    function onTextChange() {
+      if (window.event.keyCode === 13) {
+        sendText()
+        $("#cant_speak").val("");
+      }
+    }
+
+    function sendText() {
+      answer = $("#cant_speak").val();
+      if (!$silent) {
+        $(p).text(answer);
+        $(p).get(0).scrollIntoView();
+        recognition.stop();
+        console.log("USER", answer);
+        p = $('<p class="speech_bot" data-content="'+botname+' : " style="color : '+color+'"></p>');
+        $sp.append(p);
+        $.ajax({
+          type: "POST",
+          url: '/reco',
+          data: {
+            transcript: String(answer),
+            confidence: 1,
+            sentence: 1
+          }
+        });
+      }
+    }
+
+    startRecognition();
+  </script>
+</body>
+
+</html>

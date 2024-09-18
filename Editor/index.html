@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Editor</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="icomoon.css" rel="stylesheet" />
+        <link href="styles.css" rel="stylesheet" />
+        <link href="custom.css" rel="stylesheet" />
+    </head>
+    <body>
+      <div class="progress">
+        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; height: 100%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+        <div id='topContainer' class="container" style='margin-top: 20px;'>
+          <div class="btn-group" role="group">
+            <button type="button" id='sequence' class="btn btn-outline-dark" title='Sequence'>Sequence</button>
+            <button type="button" id='sentences' class="btn btn-outline-dark" title='Sentences'>Sentences</button>
+          </div>
+          
+          <div class="btn-group" role="group" style='margin-left: 12px;'>
+            <button type="button" id="admin" class="btn btn-outline-dark" title='Paramètres'>Paramètres</button>
+            <button type="button" id="reload" class="btn btn-outline-dark" title='Restart the "brain"'><span class="icon-repeat"></button>
+          </div>
+          <div class="btn-group" id="socketStateBut" role="group" style='margin-left: 12px;'>
+            <button type="button" id="socketState" class="btn btn-outline-dark btn-ignore">Connecting...</button>
+          </div>
+          <div class="btn-group" role="group" style='margin-left: 12px;'>
+            <button type="button" id='plus' class="btn btn-outline-dark editBut" title='Add'><span class="icon-plus"></button>
+            <button type="button" id='del' class="btn btn-outline-dark editBut" title='Delete'><span class="icon-minus"></button>
+          </div>
+          <div class="btn-group" role="group" style='margin-left: 12px;'>
+            <!--button type="button" id='up' class="btn btn-outline-dark seqBut" title='Up'><span class="icon-chevron-up"></button>
+            <button type="button" id='down' class="btn btn-outline-dark seqBut" title='Down'><span class="icon-chevron-down"></button-->
+            <button type="button" id='sort' class="btn btn-outline-dark seqBut" title='Sort'><span class="icon-sort-amount-asc"></button>
+          </div>
+          <div class="btn-group" role="group" style='margin-left: 12px;'>
+            <button type="button"  id='info' class="btn btn-outline-dark btn-ignore" title='Info'></button>
+          </div>
+          
+          
+          <table class="table">
+            <thead>
+              <tr id='header'>
+              </tr>
+            </thead>
+            <tbody id='data'>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="modal fade" id="modalContent" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Edit this element</h5>
+                <button type="button" id='Close' class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div id="mb-Sequence" style="display: none;">
+                    <label for="num">Part</label>
+                    <input type="number" class="form-control2" id="num"></input>
+                    <label for="prompt">Prompt</label>
+                    <textarea type="text" class="form-control2" id="prompt"></textarea>
+                    <label for="first">First Sentence</label>
+                    <textarea type="text" class="form-control2" id="first"></textarea>
+                    <label for="nb_inter">Max interactions</label>
+                    <input type="number" class="form-control2" id="nb_inter" min="-1"></input>
+                    <label for="dur_max" style="display: none;">Max duration (s)</label>
+                    <input type="number" class="form-control2" id="dur_max" min="-1" style="display: none;"></input>
+                    <label for="video">Video link</label>
+                    <select id="video" name="video">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="0">ignore</option>
+                    </select>
+                  </div>
+                  <div id="mb-Sentences" style="display: none;">
+                    <textarea type="text" class="form-control2" id="sentenceContent"></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="Cancel" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="Ok" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="modalAdmin" tabindex="-1" aria-labelledby="modalAdminLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalAdminLabel">Paramètres</h5>
+                <button type="button" id='Close' class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body btn-group" role="group">
+                <button type="button" id='load' class="btn btn-outline-dark seqBut" title='Load'>Load Project</button>
+                <button type="button" id='saveas' class="btn btn-outline-dark seqBut" title='SaveAs'>Save As...</button-->
+              </div>
+              <div class="modal-body">
+                  <input type="number" id="speed" name="speed" min="0.0" max="2.0" step="0.01">
+                  <label class="label-inline" for="speed">Voice Speed (0.0 - 2.0)</label><br/-->
+                  <!--input type="number" id="max_inter" name="max_inter" min="1" max="100">
+                  <label class="label-inline" for="max_inter">Nombre maximum d'interactions</label><br/>
+                  <input type="number" id="max_inter_s" name="max_inter_s" min="10" max="360">
+                  <label class="label-inline" for="max_inter_s">Durée maximum d'interaction (en secondes)</label><br/-->
+                  <input type="number" id="max_silence" name="max_silence" min="1" max="120">
+                  <label class="label-inline" for="max_silence">Silence maximum avant relance (en secondes)</label><br/>
+                  <input type="number" id="max_relance_quit" name="max_relance_quit" min="1" max="10">
+                  <label class="label-inline" for="max_relance_quit">Nombres de relances avant de considérer que l'utilisateur est parti</label><br/>
+                  <select id="voiceChoo">
+                  </select>
+                  <label class="label-inline" for="voiceChoo">Voix</label><br/>
+                  <select id="lang">
+                    <option value="fr-FR">Français</option>
+                    <option value="en-US">Anglais</option>
+                    <option value="en-GB">Américain</option>
+                    <option value="es-ES">Espagnol</option>
+                  </select>
+                  <label class="label-inline" for="lang">Langue *</label><br/>
+                  <input type="text" id="model"></input>
+                  <label class="label-inline" for="lang">Modèle Mistral *</label><br/>
+                  <input type="text" id="botname" placeholder="bot"></input>
+                  <label class="label-inline" for="botname">Nom du bot</label><br/>
+                  <input type="text" id="username" placeholder="you"></input>
+                  <label class="label-inline" for="username">Nom de l'utilisateur</label><br/>
+                  <textarea type="text" class="form-control2" id="end_prompt"></textarea>
+                  <label class="label-inline" for="end_prompt">Fin du prompt</label><br/>
+                  <label class="label-inline" for="lang" style="font-weight: normal;font-style: italic; font-size: 0.7rem;">* redémarrage nécessaire</label><br/>
+                  
+                </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" id="save_params" onclick='saveConfig()'>Save parameters</button>
+                <button class="btn btn-secondary" id="reload" onclick='reloadBrain()'>Restart the "brain"</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <script src="js/jquery-3.7.1.min.js"></script>
+        <script src="js/jquery-ui.min.js"></script>
+        <script src="js/jquery.ui.touch-punch.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

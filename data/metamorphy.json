@@ -1,0 +1,70 @@
+{
+    "settings": {
+        "max_inter": 90,
+        "max_inter_s": 900,
+        "max_silence": 30,
+        "max_relance_quit": 4,
+        "pitch": 0.0,
+        "speed": 1.1,
+        "voice": "en-GB-Wavenet-B",
+        "lang": "en-GB",
+        "model": "ft:mistral-small-latest:a8c72c9e:20240627:1267b6a8",
+        "botname": "metamophy",
+        "username": "user",
+        "end_prompt": "\n\nConversation Summary:\n{history}\nCurrent conversation:\n{chat_history_lines}\nUser: {input}\nMetamorphy:"
+    },
+    "sentences": {
+        "goodbyes": [
+            "Goodbye",
+            "See you soon",
+            "You're leaving already ? goodbye"
+        ],
+        "relaunch": [
+            "Are you listening ?",
+            "Where are you ?",
+            "do you care about what I'm telling you ?"
+        ]
+    },
+    "sequence": {
+        "0": {
+            "prompt": "You are metamorphy, a strange creature from the future, half artifical intelligence, half pink slime blob",
+            "first": "",
+            "nb_inter": "0",
+            "dur_max": "60",
+            "video": "0"
+        },
+        "1": {
+            "prompt": "you are happy",
+            "first": "Hello, I'm metamophy",
+            "nb_inter": "4",
+            "dur_max": "60",
+            "video": "1"
+        },
+        "2": {
+            "prompt": "you are excited",
+            "first": "",
+            "nb_inter": "3",
+            "dur_max": "60",
+            "video": "2"
+        },
+        "3": {
+            "prompt": "you are bored",
+            "first": "",
+            "nb_inter": "3",
+            "dur_max": "60",
+            "video": "3"
+        }
+    },
+    "sound": {
+        "ring": 0.05,
+        "hang": 0.05,
+        "botthink": 0.3,
+        "ambiant": 0.1,
+        "final": 0.7,
+        "fadeInMs": 3000,
+        "fadeOutMs": 10000,
+        "botthinkFadeOut": 1200,
+        "stopFadeOut": 1500,
+        "path": "../sounds/"
+    }
+}

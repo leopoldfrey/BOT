@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <title>Bot Viewer</title>
+</head>
+
+<body style="background-color: black;">
+  <div id='topbar' style='display: none'>Bot Viewer
+  </div>
+  <div id='speech'>
+  </div>
+  <script>
+    // INIT VARS
+    var username = "You";
+    var botname = "Bot";
+    var color = "#FFFFFF";
+    var $silent = false;
+    var $sp = $('#speech');
+    var p;
+
+    $(".speech_you").attr('data-content', username+" : ");
+    $(".speech_bot").attr('data-content', botname+ " : ");
+
+    // INIT WEBSOCKET
+    let socket = new WebSocket("ws://localhost:9001");
+
+    socket.onopen = function(e) {
+      console.log("[open] Connection established");
+      socket.send(JSON.stringify({
+        'command': 'connect'
+      }));
+    };
+
+    socket.onmessage = function(event) {
+      // console.log(`[message] Data received from server: ${event.data}`);
+      data = JSON.parse(event.data);
+      if (data.command == "on") {}
+      else if (data.command == "phone") {}
+      else if (data.command == "facedetect") {}
+      else if (data.command == "botname") {
+        botname = data.value;
+        last_bot =  $("#speech").children(".speech_bot").last();
+        last_bot.attr('data-content', botname+ " : ");
+      } else if (data.command == "username") {
+        username = data.value;
+        last_bot =  $("#speech").children(".speech_you").last();
+        last_bot.attr('data-content', username+ " : ");
+      } else if (data.command == "bot" || data.command == "_bot") {
+        console.log("BOT", data.value);
+        if (!p || p.text() != "") {
+          p = $('<p class="speech_you"></p>');
+          $sp.append(p);
+        }
+        $(p).removeClass("speech_you");
+        $(p).attr('data-content', botname+" : ")
+        $(p).addClass("speech_bot");
+        $(p).css('color', color);
+        $(p).text(data.value);
+        $(p).get(0).scrollIntoView();
+      } else if(data.command == "_user") {
+        console.log("USER", data.value);
+        p = $('<p class="speech_you"></p>');
+        $(p).text(data.value);
+        $sp.append(p);
+        $(".speech_you").attr('data-content', username+" : ")
+        $(p).get(0).scrollIntoView();
+      } else if(data.command == "clear") {
+        $sp.empty();
+      } else if(data.command == "timers") {
+      } else if(data.command == "username") {
+        if(data.value != "")
+          username = data.value;
+        $(".speech_you").attr('data-content', username+" : ");
+      } else if(data.command == "silent") {
+        $silent = data.value;
+        if($silent) {
+          $stat2.text('Pause');
+          $stat2.removeClass('ready');
+          $stat2.addClass('pause');
+        } else {
+          $stat2.text('Ready');
+          $stat2.removeClass('pause');
+          $stat2.addClass('ready');
+        }
+      } else {
+        console.log("[ws]", data);
+      }
+    };
+
+    socket.onclose = function(event) {
+      console.log('[close] Connection closed');
+    };
+
+    socket.onerror = function(error) {
+      console.log(`[error] ${error.message}`);
+    };
+
+    function pause() {
+      socket.send(JSON.stringify({'command':'pause'}));
+    }
+
+    function reset() {
+      socket.send(JSON.stringify({'command':'reset'}));
+    }
+
+    function stop() {
+      socket.send(JSON.stringify({'command':'stop'}));
+    }
+
+    function stepUp() {
+      socket.send(JSON.stringify({'command':'stepUp'}));
+    }
+
+    $stat2.text('Pause');
+    $stat2.removeClass('error');
+    $stat2.removeClass('ready');
+    $stat2.addClass('pause');
+
+    function convertTime(t) {
+      s = Math.floor(t);
+      ss = s % 60;
+      m = Math.floor(s / 60);
+      // console.log(m, ss);
+      return zeroPad(m, 2)+":"+zeroPad(ss, 2);
+    }
+
+    function zeroPad(num, places) {
+      var zero = places - num.toString().length + 1;
+      return Array(+(zero > 0 && zero)).join("0") + num;
+    }
+
+  </script>
+</body>
+</html>
