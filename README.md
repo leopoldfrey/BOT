@@ -18,7 +18,7 @@
   Dans l'éditeur, en cliquant sur <code>paramètres</code> puis <code>load project</code>, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un <code>save as...</code> du projet en cours.<br/>
   On peut y changer la voix, la langue, le modèle mistral...</p>
 <p>
-  Pour le son, il faut recopier le contenu du répertoire son de Dom Juan, envoi séparé par mail également.<br/>
+  Pour le son, il faut recopier le contenu du répertoire son de Dom Juan, envoi séparé par mail.<br/>
   Il faut aussi créer un répertoire "secret" avec les codes d'api mistal & google, envoi séparé par mail également
 </p>
 <p>
