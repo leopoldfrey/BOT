@@ -1,20 +1,21 @@
-L'ultime Bot pour Don Quijote ou Don quixote ou Metamorphy...
+<h1>L'ultime Bot pour Don Quijote ou Don quixote ou Metamorphy...</h1>
+<h4>! Python 3.9.13 !</h4>
 
-! Python 3.9.13 !<br/>
-
-les scripts :
+<p>les scripts :
 - install pour installer l'environnement virtuel 
 - start Editor pour démarrer l'éditeur
-- start Bot pour démarrer le bot
+- start Bot pour démarrer le bot</p>
 
-pour utiliser les scripts ps1, il faut installer powershell
-puis en associant l'extension ps1 avec le terminal (toujours ouvrir avec...) on peut double-cliquer dessus pour démarrer.
-surtout pour le bot où il y a des couleurs c'est plus pratique pour comprendre ce qu'il se passe
-
-Dans l'éditeur, en cliquant sur paramètre puis load project, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un save du projet en cours
-On peut y changer la voix, la langue, le modèle mistral...
-
-Pour le son, il faut recopier le contenu du répertoire son de Dom Juan, envoi séparé par mail également
-Il faut aussi créer un répertoire "secret" avec les codes d'api mistal & google, envoi séparé par mail également
-
+<p>Pour utiliser les scripts ps1, il faut installer powershell.<br/>
+Puis en associant l'extension ps1 avec le terminal (toujours ouvrir avec...) on peut double-cliquer dessus pour démarrer.<br/>
+Surtout pour le bot où il y a des couleurs c'est plus pratique pour comprendre ce qu'il se passe.
+</p>
+<p>
+Dans l'éditeur, en cliquant sur paramètre puis load project, on peut charger un fichier json (typiquement ceux qui sont dans data) ou faire un save du projet en cours.<br/>
+On peut y changer la voix, la langue, le modèle mistral...</p>
+<p>
+Pour le son, il faut recopier le contenu du répertoire son de Dom Juan, envoi séparé par mail également.<br/>
+Il faut aussi créer un répertoire "secret" avec les codes d'api mistal & google, envoi séparé par mail également</p>
+<p>
 <i>Pour l'instant on utilise toujours google pour STT et TTS</i>
+</p>
