@@ -25,3 +25,7 @@ Et surtout pour l'ordi sous XP c'est nécessaire.
 <p>
   <i>Pour l'instant on utilise toujours google pour STT et TTS</i>
 </p>
+<p>
+  Il faut autoriser google à utliser le micro<br/>
+  <code>chrome://flags/#unsafely-treat-insecure-origin-as-secure</code>
+</p>
