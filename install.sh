@@ -2,11 +2,14 @@
 
 cd $(dirname $0)
 
+echo "Installing python 3.9"
+brew install python@3.9
+
 echo "Installing virtualenv"
 pip install virtualenv
 
 echo "Creating bot virtual environnement"
-virtualenv botenv
+virtualenv --python=/opt/homebrew/bin/python3.9 botenv
 
 echo "Entering virtual env"
 source ./botenv/bin/activate
