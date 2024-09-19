@@ -1,9 +1,8 @@
 <h3>L'ultime Bot pour Don Quijote ou Don quixote ou Metamorphy...</h3>
-<h4>! Python 3.9.13 !</h4>
 
 <p>les scripts :
   <ul>
-    <li><code>install</code> pour installer l'environnement virtuel, sinon utiliser le fichier <code>requirements.txt</code></li>
+    <li><code>install</code> pour installer python3.9 & l'environnement virtuel, sinon utiliser le fichier <code>requirements.txt</code></li>
     <li><code>start Editor</code> pour démarrer l'éditeur</li>
     <li><code>start Bot</code> pour démarrer le bot</li>
   </ul>
