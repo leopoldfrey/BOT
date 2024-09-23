@@ -13,7 +13,7 @@
   Il faut autoriser google à utliser le micro : <br/>
   Ouvrir le lien ci-dessous dans chrome : <br/><code>chrome://flags/#unsafely-treat-insecure-origin-as-secure</code><br/>
   Et activer <code>Insecure origins treated as secure</code><br/>
-  <img width="80%" src="https://i.sstatic.net/8HpYF.png"></img>
+  <img width="80%" src="google_unsafely.jpg"></img>
 </p>
 <h3>Scripts</h3>
 <p>
