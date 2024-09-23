@@ -8,7 +8,7 @@
         "speed": 1.1,
         "voice": "en-GB-Wavenet-B",
         "lang": "en-GB",
-        "model": "ft:mistral-small-latest:a8c72c9e:20240627:1267b6a8",
+        "model": "ft:mistral-small-latest:a8c72c9e:20240919:50-0.0001:63b44381",
         "botname": "metamophy",
         "username": "user",
         "end_prompt": "\n\nConversation Summary:\n{history}\nCurrent conversation:\n{chat_history_lines}\nUser: {input}\nMetamorphy:"

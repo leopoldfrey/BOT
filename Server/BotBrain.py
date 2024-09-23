@@ -83,7 +83,7 @@ class BotBrain:
         Sancho: {input}
         Don Quijote:"""
 
-        self.curPrompt = "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar en 2024, con resaca de mal humor y enfadado e intentas actualizarte haciendo preguntas sobre el mundo actual.  Intentas saber donde se encuentran las grandes aventuras de caballeros hoy, y buscas un nuevo escudero para acompanarte en tus futuras aventuras. Hablas con frases cortas, directas, con humor y a la primera persona. Haces preguntas a tu interlocutor para saber si podria ser un buen escudero para acompnarte en las proximas hazanas."
+        self.def_prompt = "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar en 2024, con resaca de mal humor y enfadado e intentas actualizarte haciendo preguntas sobre el mundo actual.  Intentas saber donde se encuentran las grandes aventuras de caballeros hoy, y buscas un nuevo escudero para acompanarte en tus futuras aventuras. Hablas con frases cortas, directas, con humor y a la primera persona. Haces preguntas a tu interlocutor para saber si podria ser un buen escudero para acompnarte en las proximas hazanas."
         
         self.filename = data
         self.loadData()
@@ -116,7 +116,7 @@ class BotBrain:
         self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
 
     def addPrompt(self, prompt):
-        self.conversation_prompt = self.curPrompt+" "+prompt+" "+self.endPrompt
+        self.conversation_prompt = self.def_prompt+" "+prompt+" "+self.endPrompt
         print("ADD NEW PROMPT")
         print(self.conversation_prompt)
         self.PROMPT = PromptTemplate(
@@ -142,7 +142,6 @@ class BotBrain:
             
         #print("\tSequence:", type(self.sequence), self.sequence)
         #print("\t0:", self.sequence[0])
-        print(">>>>>>AI_PREFIX", self.ai_prefix)
         self.def_prompt = self.sequence[0]['prompt']
         self.resetMemory()
         self.setPrompt(self.def_prompt+self.endPrompt)
@@ -252,6 +251,8 @@ class BotBrain:
         elif(address == '/model'):
             self.model = args[0]
             print("NEW MODEL", self.model)
+            self.resetMemory()
+            self.setPrompt(self.conversation_prompt)
         elif(address == '/botname'):
             self.ai_prefix = args[0]
         elif(address == '/username'):

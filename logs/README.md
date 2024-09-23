@@ -1,1 +1,0 @@
-Répertoire pour les fichiers logs
