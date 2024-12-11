@@ -154,12 +154,7 @@ class BotWebSocket(Thread):
         elif msg["command"] == "end" :
             self.parent.end()
         elif msg["command"] == "reload" :
-            self.parent.tg.stop()
-            self.userDetected = False
-            self.parent.phone = False
-            self.parent.end()
-            self.parent.readConfig()
-            self.parent.osc_client.send("/reload", 1)
+            self.parent.reload()
 
     def run(self):
         self.server.run_forever()
@@ -198,8 +193,16 @@ class BotServer:
         voices = client.list_voices()
         self.list_voices = []
         for voice in voices.voices:
-            if self.lang in voice.language_codes:
+            if "fr-FR" in voice.language_codes:
                 self.list_voices.append(voice.name)
+            if "es-ES" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            if "en-GB" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            if "en-US" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            #if self.lang in voice.language_codes:
+            #    self.list_voices.append(voice.name)
         #print("VOICES", self.list_voices)
 
         print("[Server] ___INIT TextToSpeech___")
@@ -313,6 +316,14 @@ class BotServer:
             print("[Server] OSC IN :",str(address))
             for x in range(0,len(args)):
                 print("     ",str(args[x]))
+
+    def reload(self):
+        self.tg.stop()
+        self.userDetected = False
+        self.phone = False
+        self.end()
+        self.readConfig()
+        self.osc_client.send("/reload", 1)
 
     def end(self):
         self.flagWaitEnd = False
@@ -625,6 +636,7 @@ class BotServer:
         return static_file("public/style.css", root="")
 
     def getConfig(self):
+        print(">> getConfig")
         self.wsServer.broadcast({
             'command':'params',
             'max_silence':self.config["max_silence"],
@@ -642,20 +654,22 @@ class BotServer:
         })
 
     def saveConfig(self):
-        # print("CONFIG", self.config)
+        print(">> saveConfig", self.config)
         with open(self.settingsFile, 'r') as f:
             jsonContent = json.load(f)
         with open(self.settingsFile, 'w') as f:
             jsonContent['settings'] = self.config
             json.dump(jsonContent, f, indent=4)
-        self.updateParams()
+        #self.updateParams()
+        self.reload()
 
     def readConfig(self):
+        print(">> readConfig")
         with open(self.settingsFile, 'r') as f:
             jsonContent = json.load(f)
             self.config = jsonContent['settings']
 
-        print("Configuration:",self.config)
+        print("---- > Configuration:",self.config)
         self.updateParams()
 
     def getVoices(self):
@@ -663,35 +677,59 @@ class BotServer:
         voices = client.list_voices()
         self.list_voices = []
         for voice in voices.voices:
-            if self.lang in voice.language_codes:
+            if "fr-FR" in voice.language_codes:
                 self.list_voices.append(voice.name)
+            if "es-ES" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            if "en-GB" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            if "en-US" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            #if self.lang in voice.language_codes:
+            #    self.list_voices.append(voice.name)
         #print("VOICES", self.list_voices)
         self.wsServer.broadcast({"command":"voices","value":self.list_voices})
 
     def updateParams(self):
+        print(">> updateParams")
         self.maxtime = self.config["max_inter_s"]
+        print("SET MAX TIME", self.maxtime)
         self.maxinter = self.config["max_inter"]
+        print("SET MAX INTER", self.maxinter)
         self.pitch = self.config["pitch"]
+        print("SET PITCH", self.pitch)
         self.speed = self.config["speed"]
+        print("SET SPEED", self.speed)
         self.lang = self.config['lang']
+        print("SET LANG", self.lang)
         self.voice = self.config['voice']
+        print("SET VOICE", self.voice)
+        
         client = tts.TextToSpeechClient()
         voices = client.list_voices()
         self.list_voices = []
         for voice in voices.voices:
-            if self.lang in voice.language_codes:
+            if "fr-FR" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            if "es-ES" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            if "en-GB" in voice.language_codes:
+                self.list_voices.append(voice.name)
+            if "en-US" in voice.language_codes:
                 self.list_voices.append(voice.name)
         #print("VOICES", self.list_voices)
         self.wsServer.broadcast({"command":"voices","value":self.list_voices})
-        self.wsServer.broadcast({"command":"voice","value":self.voice})
         self.wsServer.broadcast({"command":"lang", "value":self.lang})
+        self.wsServer.broadcast({"command":"voice","value":self.voice})
         self.osc_client.send("/model", self.config['model'])
         self.osc_client.send("/botname", self.config['botname'])
+        print("SET BOTNAME", self.config['botname'])
         self.wsServer.broadcast({"command":"botname", "value":self.config['botname']})
         self.osc_client.send("/username", self.config['username'])
+        print("SET USERNAME", self.config['username'])
         self.wsServer.broadcast({"command":"username", "value":self.config['username']})
         self.osc_client.send("/end_prompt", self.config['end_prompt'])
-
+        
     def resume(self):
         self.silent = False
         self.wsServer.broadcast({'command':'silent','value':self.silent})

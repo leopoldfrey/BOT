@@ -18,8 +18,8 @@ Start-Job -Name Server  -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
 $host.UI.RawUI.ForegroundColor = "Yellow"
 Write-Output "Starting Brain"
 Start-Job -Name Brain -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
-    Start-Sleep -Seconds 2;
-    ../botenv/bin/Activate.ps1
+  Start-Sleep -Seconds 3;
+  ../botenv/bin/Activate.ps1
     python ./BotBrain.py
 }
 

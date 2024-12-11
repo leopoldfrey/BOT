@@ -170,7 +170,8 @@ $(window).on('load', function() {
 });
 
 $("#admin").click(function(){
-  $.ajax({
+  modalAdmin.modal('show');
+  /*$.ajax({
     url: "/getSettings",
     type: "GET",
     success: function(response) {
@@ -193,7 +194,7 @@ $("#admin").click(function(){
     error: function(jqXHR, textStatus, errorMessage) {
         console.log(errorMessage); // Optional
     }
-  });
+  });*/
 });
 
 $("#sequence").click(function(){
@@ -602,17 +603,19 @@ function connectToWS()
     } else if(data.command == "message") {
       console.log("[ws]", data);
     } else if(data.command == "voice") {
-      console.log("VOICE SET", typeof(data.value), data.value);
-      $("#voiceChoo>option[val="+data.value+"]").prop("selected", true);//(data.value);
+      console.log("VOICE SET", data.value);
+      $("#voiceChoo").val(data.value);
+      //$("#voiceChoo>option[val="+data.value+"]").prop("selected", true);//(data.value);
     } else if(data.command == "params") {
+      console.log("params : ", data);
       $("#max_inter").val(data.max_inter);
       $("#max_inter_s").val(data.max_inter_s);
       $("#max_silence").val(data.max_silence);
       $("#max_relance_quit").val(data.max_relance_quit);
       $("#speed").val(data.speed);
       $("#lang").val(data.lang);
-      console.log("VOICE HERE", data.voice);
       $("#voiceChoo").val(data.voice);
+      console.log("VOICE HERE", data.voice, " >> ", $("#voiceChoo").val());
       $("#model").val(data.model);
       $("#botname").val(data.botname);
       $("#username").val(data.username);
@@ -621,7 +624,7 @@ function connectToWS()
     } else if(data.command == "silent") {
     } else if(data.command == "step") {
     } else if(data.command == "voices") {
-      console.log("VOICE LIST");
+      console.log("VOICE LIST", data.value);
       
       $('#voiceChoo').empty();
       (data.value).forEach((elem)=>{

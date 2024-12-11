@@ -106,8 +106,7 @@ class BotBrain:
 
     def setPrompt(self, prompt):
         self.conversation_prompt = prompt
-        print("SET NEW PROMPT:")
-        print(self.conversation_prompt)
+        print("SET NEW PROMPT", self.conversation_prompt)
         self.PROMPT = PromptTemplate(
             input_variables=["history", "input", "chat_history_lines"],
             template=self.conversation_prompt,
@@ -117,8 +116,7 @@ class BotBrain:
 
     def addPrompt(self, prompt):
         self.conversation_prompt = self.def_prompt+" "+prompt+" "+self.endPrompt
-        print("ADD NEW PROMPT")
-        print(self.conversation_prompt)
+        print("ADD NEW PROMPT", self.conversation_prompt)
         self.PROMPT = PromptTemplate(
             input_variables=["history", "input", "chat_history_lines"],
             template=self.conversation_prompt,

@@ -37,14 +37,14 @@
             "prompt": "tu eres feliz",
             "first": "Hola que tal !!!!",
             "nb_inter": "4",
-            "dur_max": "60",
+            "dur_max": "",
             "video": "1"
         },
         "2": {
             "prompt": "tu eres enojado",
             "first": "",
             "nb_inter": "3",
-            "dur_max": "60",
+            "dur_max": "",
             "video": "2"
         },
         "3": {
