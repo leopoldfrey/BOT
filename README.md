@@ -7,14 +7,14 @@
     <li><code>start Bot</code> pour démarrer le bot</li>
   </ul>
 </p>
-<h3>Utilisation du microphone</h3>
+<!--h3>Utilisation du microphone</h3>
 <p>
   Google va utiliser le microphone par défaut de l'ordinateur, à condigurer dans les préférences système, ainsi que le volume du microphone.
   Il faut autoriser google à utliser le micro : <br/>
   Ouvrir le lien ci-dessous dans chrome : <br/><code>chrome://flags/#unsafely-treat-insecure-origin-as-secure</code><br/>
   Et activer <code>Insecure origins treated as secure</code><br/>
-  <img width="80%" src="https://i.sstatic.net/8HpYF.png"></img>
-</p>
+  <img width="80%" src="google_unsafely.jpg"></img>
+</p-->
 <h3>Scripts</h3>
 <p>
   Pour utiliser les scripts <code>ps1</code>, il faut installer <a href='https://learn.microsoft.com/fr-fr/powershell/scripting/install/installing-  powershell-on-macos?view=powershell-7.4#installation-via-direct-download' target='_blank'>powershell</a>.<br/>Ça fait la même chose que les scripts shell mais en associant l'extension ps1 avec le terminal (toujours ouvrir avec...), on peut double-cliquer dessus pour démarrer.<br/>
