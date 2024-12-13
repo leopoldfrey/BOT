@@ -29,6 +29,14 @@ from langchain.memory import (
 from langchain_core.prompts import PromptTemplate
 from langchain_mistralai.chat_models import ChatMistralAI
 
+def contains(str, substr):
+    if substr:
+        substr_len = len(substr)
+        for i in range(len(str)):
+            if str[i:i+substr_len] == substr:
+                return True
+    return False
+
 class BotBrain:
     # initialisation de la classe
     def __init__(self, data="../data/default.json"):
@@ -202,10 +210,15 @@ class BotBrain:
                 self.osc_client.send('/end',self.lastresponse)
                 return None
 
-        self.lastresponse = self.conversation.invoke({"input": phrase})['response']
+        self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
         print("[BotBrain]",self.curPart,self.lastresponse)
         self.log.logBot(self.curPart, self.lastresponse)
         self.osc_client.send('/lastresponse', self.lastresponse)
+
+
+    def postProcess(self, str):
+        return (str.split("Sancho :")[0]).split("Sancho:")[0]
+        
 
     # fin de conversation déclenchée par le controleur principal (temps max ou nombre d'interactions max)
     def endConversation(self, phrase):

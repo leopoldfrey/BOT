@@ -13,6 +13,7 @@ import functools
 print = functools.partial(print, flush=True)
 
 DEBUG = False
+DEBUG2 = False
 
 import google.cloud.texttospeech as tts
 
@@ -527,7 +528,7 @@ class BotServer:
             self.lastInteractionTime = time.time()
             self.wsServer.broadcast({'command':'_bot','value':self.tmp_response})
             # print("INTERACTIONS", self.interactions % self.config["max_interactions"])
-            if(DEBUG):
+            if(DEBUG or DEBUG2):
                 print(">>", translateFR(self.tmp_response))
             self.speak(self.tmp_response)
         else:
