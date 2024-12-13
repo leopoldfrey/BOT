@@ -212,8 +212,13 @@ class BotBrain:
                 self.osc_client.send('/end',self.lastresponse)
                 return None
 
-        self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
-        print("[BotBrain]",self.curPart,self.lastresponse)
+        try:
+            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+        except:
+            print("HTTPStatusError")
+            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+        finally:
+            print("[BotBrain]",self.curPart,self.lastresponse)
         self.log.logBot(self.curPart, self.lastresponse)
         self.osc_client.send('/lastresponse', self.lastresponse)
 
