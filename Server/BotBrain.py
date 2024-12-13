@@ -23,7 +23,7 @@ from langchain.chains import ConversationChain
 from langchain.memory import (
     CombinedMemory,
     ConversationBufferMemory,
-    ConversationSummaryMemory,
+    #ConversationSummaryMemory,
     ConversationBufferWindowMemory,
 )
 from langchain_core.prompts import PromptTemplate
@@ -55,6 +55,7 @@ class BotBrain:
         self.curStep = 0
         self.curPart = 0
         
+        '''
         self.summary_prompt = """Progresivamente resume las líneas de conversación proporcionadas, \
         añadiendo al resumen anterior y devolviendo un nuevo resumen.
 
@@ -79,7 +80,8 @@ class BotBrain:
         {new_lines}
 
         Nuevo resumen:"""
-
+        '''
+        
         self.ai_prefix = "Don Quijote:"
         self.human_prefix = "Sancho:"
         self.endPrompt = """
@@ -103,14 +105,14 @@ class BotBrain:
         self.conv_memory = ConversationBufferWindowMemory(k=10,
             memory_key="chat_history_lines", input_key="input",  ai_prefix=self.ai_prefix, human_prefix=self.human_prefix
         )
-
+        '''
         self.summary_template = PromptTemplate(input_variables=['new_lines', 'summary'], template=self.summary_prompt)
 
         self.summary_memory = ConversationSummaryMemory(llm=ChatMistralAI(api_key=api_key), input_key="input", \
                                                 prompt=self.summary_template, human_prefix=self.human_prefix, \
                                                 ai_prefix=self.ai_prefix)
-        
-        self.memory = CombinedMemory(memories=[self.conv_memory, self.summary_memory])
+        '''
+        self.memory = self.conv_memory #CombinedMemory(memories=[, self.summary_memory])
 
     def setPrompt(self, prompt):
         self.conversation_prompt = prompt
@@ -210,8 +212,13 @@ class BotBrain:
                 self.osc_client.send('/end',self.lastresponse)
                 return None
 
-        self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
-        print("[BotBrain]",self.curPart,self.lastresponse)
+        try:
+            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+        except:
+            print("HTTPStatusError")
+            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+        finally:
+            print("[BotBrain]",self.curPart,self.lastresponse)
         self.log.logBot(self.curPart, self.lastresponse)
         self.osc_client.send('/lastresponse', self.lastresponse)
 
