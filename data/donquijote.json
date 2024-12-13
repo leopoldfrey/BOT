@@ -11,7 +11,7 @@
         "model": "ft:mistral-small-latest:a8c72c9e:20240627:1267b6a8",
         "botname": "Don Quijote",
         "username": "Sancho",
-        "end_prompt": "Conversacion actual:\n{chat_history_lines}\nSancho: {input}\nDon Quijote:"
+        "end_prompt": "\n\nResumen de conversación:\n{history}\nConversación actual:\n{chat_history_lines}\nSancho: {input}\nDon Quijote:"
     },
     "sentences": {
         "goodbyes": [

@@ -11,7 +11,7 @@
         "model": "ft:mistral-small-latest:a8c72c9e:20240919:50-0.0001:63b44381",
         "botname": "metamophy",
         "username": "user",
-        "end_prompt": "Current conversation:\n{chat_history_lines}\nUser: {input}\nMetamorphy:"
+        "end_prompt": "\n\nConversation Summary:\n{history}\nCurrent conversation:\n{chat_history_lines}\nUser: {input}\nMetamorphy:"
     },
     "sentences": {
         "goodbyes": [
