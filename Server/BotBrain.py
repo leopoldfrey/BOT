@@ -23,8 +23,8 @@ from langchain.chains import ConversationChain
 from langchain.memory import (
     CombinedMemory,
     ConversationBufferMemory,
-    ConversationSummaryMemory,
     ConversationBufferWindowMemory,
+    
 )
 from langchain_core.prompts import PromptTemplate
 from langchain_mistralai.chat_models import ChatMistralAI
@@ -83,9 +83,6 @@ class BotBrain:
         self.ai_prefix = "Don Quijote:"
         self.human_prefix = "Sancho:"
         self.endPrompt = """
-        
-        Resumen de conversación:
-        {history}
         Conversación actual:
         {chat_history_lines}
         Sancho: {input}
@@ -103,20 +100,13 @@ class BotBrain:
         self.conv_memory = ConversationBufferWindowMemory(k=10,
             memory_key="chat_history_lines", input_key="input",  ai_prefix=self.ai_prefix, human_prefix=self.human_prefix
         )
-
-        self.summary_template = PromptTemplate(input_variables=['new_lines', 'summary'], template=self.summary_prompt)
-
-        self.summary_memory = ConversationSummaryMemory(llm=ChatMistralAI(api_key=api_key), input_key="input", \
-                                                prompt=self.summary_template, human_prefix=self.human_prefix, \
-                                                ai_prefix=self.ai_prefix)
-        
-        self.memory = CombinedMemory(memories=[self.conv_memory, self.summary_memory])
+        self.memory = self.conv_memory
 
     def setPrompt(self, prompt):
         self.conversation_prompt = prompt
         print("SET NEW PROMPT", self.conversation_prompt)
         self.PROMPT = PromptTemplate(
-            input_variables=["history", "input", "chat_history_lines"],
+            input_variables=["input", "chat_history_lines"],
             template=self.conversation_prompt,
         )
         self.llm = ChatMistralAI(api_key=api_key, model=self.model)
@@ -126,7 +116,7 @@ class BotBrain:
         self.conversation_prompt = self.def_prompt+" "+prompt+" "+self.endPrompt
         print("ADD NEW PROMPT", self.conversation_prompt)
         self.PROMPT = PromptTemplate(
-            input_variables=["history", "input", "chat_history_lines"],
+            input_variables=["input", "chat_history_lines"],
             template=self.conversation_prompt,
         )
         self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
@@ -210,7 +200,10 @@ class BotBrain:
                 self.osc_client.send('/end',self.lastresponse)
                 return None
 
+        prev = self.lastresponse
         self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+        if(self.lastresponse == prev): 
+            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
         print("[BotBrain]",self.curPart,self.lastresponse)
         self.log.logBot(self.curPart, self.lastresponse)
         self.osc_client.send('/lastresponse', self.lastresponse)
