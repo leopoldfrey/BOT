@@ -60,7 +60,8 @@ class BotSound():
         if(address == '/phase'):
             self.botThink(args[0])
         elif(address == '/section'):
-            self.section(args[0])
+            #self.section(args[0])
+            pass
         elif(address == '/stop'):
             self.stop(args[0])
         elif(address == '/phone'):
@@ -132,7 +133,7 @@ class BotSound():
 
         else: #END ANIMATION
             print("[Sound] Play End File")
-            self.xfade(self.end, loop=0)
+            #self.xfade(self.end, loop=0)
 
     def xfade(self, newsound, loop=-1):
         if self.channel == CHANNEL_AMBIANT_A :

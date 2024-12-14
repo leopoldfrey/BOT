@@ -13,7 +13,7 @@ import functools
 print = functools.partial(print, flush=True)
 
 DEBUG = False
-DEBUG2 = False
+DEBUG2 = True
 
 import google.cloud.texttospeech as tts
 

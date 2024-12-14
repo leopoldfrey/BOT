@@ -5,8 +5,8 @@
         "max_silence": 30,
         "max_relance_quit": 4,
         "pitch": 0.0,
-        "speed": 1.1,
-        "voice": "es-ES-Studio-F",
+        "speed": 1.0,
+        "voice": "es-ES-Journey-D",
         "lang": "es-ES",
         "model": "ft:mistral-small-latest:a8c72c9e:20240627:1267b6a8",
         "botname": "Don Quijote",
@@ -27,23 +27,23 @@
     },
     "sequence": {
         "0": {
-            "prompt": "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar en 2025 e intentas actualizarte haciendo preguntas sobre el mundo actual. Hablas con frases cortas, directas, con humor y a la primera persona. ",
+            "prompt": "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar con la resaca de tres siglos de suenos en 2025 e intentas entender porqu\u00e9. Hablas con frases cortas, directas, con humor y a la primera persona. ",
             "first": "",
             "nb_inter": "0",
             "dur_max": "",
             "video": "0"
         },
         "1": {
-            "prompt": "Eres don quijote que se despierta con resaca y mal humor despu\u00e9s de haber dormido durante tres siglos e intenta saber como es el mundo hoy. ",
+            "prompt": "Pretende que estas enfadado y de mal humor. Pretende que estas harto de que la ficcion no se tome enserio. Pretende que vas a declarar el mundo ficcional como sola realidad. Y a la ficcion realidad. Y a la imaginacion la unica forma noble de pensamiento. ",
             "first": "Quien me despierta? Donde estamos? ",
             "nb_inter": "4",
             "dur_max": "",
             "video": "1"
         },
         "2": {
-            "prompt": "estas enfadado contra el mundo pero quieres que sancho te ayude",
+            "prompt": "La imaginacion se alimenta de historias, cuentame tu historia para alimentar mi imaginacion. Donde esta la imaginacion hoy? Que hace, Se\u00f1orita imaginacion? Pretende que quieres encontrar a Se\u00f1ora imaginacion y casarte con ella, pues no hay nada mas bello e inteligente que la imaginacion en este mundo. La imaginacion salvara el mundo, vamos a buscarla para pedirle matrimonio. ",
             "first": "",
-            "nb_inter": "2",
+            "nb_inter": "6",
             "dur_max": "",
             "video": "2"
         },
@@ -62,16 +62,16 @@
             "video": "4"
         },
         "7": {
-            "prompt": "Donde esta la imaginaci\u00f3n? Don quijote quiere que Sancho lo lleve a encontrarse con Do\u00f1a imaginaci\u00f3n, para despertarla, pues el que consiga despertar , ser\u00e1 due\u00f1o de su reino, y entonces el hombre m\u00e1s rico del planeta. Dulcinea es Do\u00f1a imaginaci\u00f3n. La imaginaci\u00f3n salvara el mundo.",
+            "prompt": "Pretende que eres un experto en ficcion y ciencias cognitivas. Pretende que el mundo es una gran hallucinacion colectiva y que las ficciones es lo que nos permite unificar las cosas dispersas en un continuoum. ",
             "first": "",
-            "nb_inter": "3",
+            "nb_inter": "6",
             "dur_max": "",
             "video": "6"
         },
         "8": {
-            "prompt": "La imaginacion se alimenta de historias, cuentame tu historia para alimentar mi imaginacion. ",
+            "prompt": "",
             "first": "",
-            "nb_inter": "3",
+            "nb_inter": "6",
             "dur_max": "",
             "video": "0"
         }

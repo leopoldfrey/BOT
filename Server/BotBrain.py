@@ -97,7 +97,7 @@ class BotBrain:
 
     def resetMemory(self):
         print("RESET MEMORY")
-        self.conv_memory = ConversationBufferWindowMemory(k=10,
+        self.conv_memory = ConversationBufferWindowMemory(k=100,
             memory_key="chat_history_lines", input_key="input",  ai_prefix=self.ai_prefix, human_prefix=self.human_prefix
         )
         self.memory = self.conv_memory
@@ -201,10 +201,15 @@ class BotBrain:
                 return None
 
         prev = self.lastresponse
-        self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
-        if(self.lastresponse == prev): 
+        try:
             self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
-        print("[BotBrain]",self.curPart,self.lastresponse)
+            if(self.lastresponse == prev): 
+                self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+        except:
+            print("¡¡¡Error!!!")
+            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+        finally:
+            print("[BotBrain]",self.curPart,self.lastresponse)
         self.log.logBot(self.curPart, self.lastresponse)
         self.osc_client.send('/lastresponse', self.lastresponse)
 
