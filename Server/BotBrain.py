@@ -195,9 +195,10 @@ class BotBrain:
                     print("NO FIRST, GENERATING...")
             except IndexError:
                 print("ERROR, NO MORE PARTS")
-                self.lastresponse = 'adelante Sancho, hablamos luego!'
-                self.log.logBot(self.curPart, self.lastresponse)
-                self.osc_client.send('/end',self.lastresponse)
+                self.endConversation()
+                #self.lastresponse = 'adelante Sancho, hablamos luego!'
+                #self.log.logBot(self.curPart, self.lastresponse)
+                #self.osc_client.send('/end',self.lastresponse)
                 return None
 
         prev = self.lastresponse
