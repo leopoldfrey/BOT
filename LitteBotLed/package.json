@@ -1,0 +1,39 @@
+{
+  "name": "magic-home",
+  "version": "2.9.0",
+  "description": "An implementation of the \"Magic Home\" app functionality",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jangxx/node-magichome.git"
+  },
+  "keywords": [
+    "smart",
+    "home",
+    "magic",
+    "wifi",
+    "led"
+  ],
+  "author": "jangxx <jangxx@protonmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jangxx/node-magichome/issues"
+  },
+  "homepage": "https://github.com/jangxx/node-magichome#readme",
+  "bin": {
+    "magic-home": "./cli.js"
+  },
+  "dependencies": {
+    "commander": "^2.20.0",
+    "merge-options": "^1.0.1",
+    "node-osc": "^8.0.3",
+    "child_process": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.1"
+  },
+  "types": "index.d.ts"
+}

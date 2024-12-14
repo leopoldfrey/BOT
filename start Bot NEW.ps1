@@ -20,14 +20,32 @@ Start-Job -Name Brain -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   python ./BotBrain.py
 }
 
+$host.UI.RawUI.ForegroundColor = "Red"
+echo "Starting Led"
+$job2 = Start-Job -Name LitteBotLed -WorkingDirectory $PWD/LitteBotLed -ScriptBlock {
+   node ./ledCtrl.js
+}
+
+$host.UI.RawUI.ForegroundColor = "Green"
+echo "Starting Unreal"
+$job6 = Start-Job -Name LitteBotUnreal  -WorkingDirectory $PWD/LitteBotServer -ScriptBlock {
+  Start-Sleep -Seconds 50;
+   C:\PLASTIC\LITTLEBOT_EXPORT\WindowsNoEditor\FaceARSample.exe
+}
+
+
 While (Get-Job -State "Running")
 {
   $host.UI.RawUI.ForegroundColor = "Magenta"
   Receive-Job -Name Sound
+  $host.UI.RawUI.ForegroundColor = "Red"
+  Receive-Job -Name LitteBotLed
   $host.UI.RawUI.ForegroundColor = "Yellow"
   Receive-Job -Name Brain
   $host.UI.RawUI.ForegroundColor = "cyan"
   Receive-Job -Name Server
+  $host.UI.RawUI.ForegroundColor = "Green"
+  Receive-Job -Name LitteBotUnreal
   Start-Sleep -Seconds 0.01
   If ($Host.UI.RawUI.KeyAvailable -and ($Key = $Host.UI.RawUI.ReadKey("AllowCtrlC,NoEcho,IncludeKeyUp"))) {
     If ([Int]$Key.Character -eq 3) {
@@ -36,9 +54,13 @@ While (Get-Job -State "Running")
       Stop-Job -Name Server
       Stop-Job -Name Brain
       Stop-Job -Name Sound
+      Stop-Job -Name LitteBotUnreal
+      Stop-Job -Name LitteBotLed
       Remove-Job -Name Server
       Remove-Job -Name Brain
       Remove-Job -Name Sound
+      Remove-Job -Name LitteBotUnreal
+      Remove-Job -Name LitteBotLed
     }
   }
 }
