@@ -31,7 +31,7 @@ class BotSound():
         print("[Sound] Load Sounds")
         self.phoneRing = pygame.mixer.Sound(self.sound_path + "phoneRing.wav")
         self.phoneRing.set_volume(self.config['ring'])
-        self.phoneHang = pygame.mixer.Sound(self.sound_path + "phoneHang.wav")
+        self.phoneHang = pygame.mixer.Sound(self.sound_path + "phoneHangES.wav")
         self.phoneHang.set_volume(self.config['hang'])
         self.section1 = pygame.mixer.Sound(self.sound_path + "1.intro.wav")
         self.section1.set_volume(self.config['ambiant'])
