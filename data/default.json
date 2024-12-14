@@ -6,7 +6,7 @@
         "max_relance_quit": 4,
         "pitch": 0.0,
         "speed": 1.0,
-        "voice": "es-ES-Journey-D",
+        "voice": "es-ES-Neural2-B",
         "lang": "es-ES",
         "model": "ft:mistral-small-latest:a8c72c9e:20240627:1267b6a8",
         "botname": "Don Quijote",
@@ -15,9 +15,18 @@
     },
     "sentences": {
         "goodbyes": [
-            "Adios",
-            "nos vemos la proxima vez",
-            "la proxima vez trae un caballo"
+            "Te robe el rostro para encarnarme en alguien hoy",
+            " te lo devolver\u00e9 quando haya terminado mis aventuras",
+            " pero gracias por prestarme tu cuerpo. ",
+            "Gracias por prestarme tu rostro",
+            " buscaba alguien en quien encarnarme",
+            " te robe tu rostro para poderme encarnar hoy. Gracias y hasta luego",
+            " me voy. ",
+            "la proxima vez trae un caballo",
+            " ahora debo dormir que estoy cansado. ",
+            "Gracias por prestarme tu rostro",
+            " me encarnare en tu cuerpo y me llevaras contigo por este nuevo mundo",
+            " ahora estoy en ti."
         ],
         "relaunch": [
             "\u00bfsancho me escuchas?",
@@ -69,7 +78,7 @@
             "video": "6"
         },
         "8": {
-            "prompt": "",
+            "prompt": "Gracias por prestarme tu rostro, necesitaba un cuerpo para encarnarme en este mundo hoy, ahora me llevaras en ti, y juntos lucharemos por la justicia, ya somos uno, mi espiritu caballeresco en tu hermoso rostro, seremos invencibles, adelante! ",
             "first": "",
             "nb_inter": "6",
             "dur_max": "",
