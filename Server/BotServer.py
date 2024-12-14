@@ -188,7 +188,7 @@ class BotServer:
         self.relanceCount = 0
         self.userDetected = False
         self.voice = DEF_VOICE
-        self.voiceOn = False
+        self.voiceOn = True
         self.lang = LANGUAGE
         client = tts.TextToSpeechClient()
         voices = client.list_voices()
@@ -471,7 +471,7 @@ class BotServer:
             # print("INTER", self.interactions)
             if(DEBUG):
                 mess = translateES(mess)
-            
+
             if self.interactions >= self.maxinter :
                 self.osc_client.send("/end", mess)
             else :
@@ -533,7 +533,7 @@ class BotServer:
             self.speak(self.tmp_response)
         else:
             print("SERVER receiveResponse OFF", r)
-            
+
     def areYouThere(self):
         self.osc_client.send("/areYouThere", 1)
 
@@ -705,7 +705,7 @@ class BotServer:
         print("SET LANG", self.lang)
         self.voice = self.config['voice']
         print("SET VOICE", self.voice)
-        
+
         client = tts.TextToSpeechClient()
         voices = client.list_voices()
         self.list_voices = []
@@ -730,7 +730,7 @@ class BotServer:
         print("SET USERNAME", self.config['username'])
         self.wsServer.broadcast({"command":"username", "value":self.config['username']})
         self.osc_client.send("/end_prompt", self.config['end_prompt'])
-        
+
     def resume(self):
         self.silent = False
         self.wsServer.broadcast({'command':'silent','value':self.silent})

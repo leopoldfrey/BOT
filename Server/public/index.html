@@ -26,7 +26,7 @@
       <span class="slider round"></span>
     </label><!-- On-->
     <label class="switch">
-      <input type="checkbox" name="voice" id="voice">
+      <input type="checkbox" name="voice" id="voice" checked>
       <span class="slider round"></span>
     </label> Voice
     <button tname="end" id="end">End</button>
@@ -41,13 +41,13 @@
       <span class="info3" id="lang"></span> / <span class="info3" id="dispVoice"></span><br/>
       <span class="info3" id="model"></span>
     </div>
-    
+
   </div>
   <script>
     var DEBUG = false;
     const statusText = document.getElementById('status');
     var recognition;
-    
+
     function startRecognition() {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
@@ -268,7 +268,7 @@
         'command': 'stop'
       }));
     }
-  
+
     function convertTime(t) {
       s = Math.floor(t);
       ss = s % 60;

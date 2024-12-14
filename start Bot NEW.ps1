@@ -22,8 +22,8 @@ Start-Job -Name Brain -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
 
 $host.UI.RawUI.ForegroundColor = "Green"
 echo "Starting Unreal"
-$job6 = Start-Job -Name LitteBotUnreal  -WorkingDirectory $PWD/LitteBotServer -ScriptBlock {
-  Start-Sleep -Seconds 50;
+$job6 = Start-Job -Name LitteBotUnreal  -WorkingDirectory $PWD/Server -ScriptBlock {
+  Start-Sleep -Seconds 5;
    C:\PLASTIC\LITTLEBOT_EXPORT\WindowsNoEditor\FaceARSample.exe
 }
 
