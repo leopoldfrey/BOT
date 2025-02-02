@@ -86,15 +86,15 @@
         }
     },
     "sound": {
-        "ring": 5.0,
-        "hang": 0.3,
-        "botthink": 0.3,
-        "ambiant": 0.1,
+        "ring": 0.1,
+        "hang": 0.1,
+        "botthink": 0.6,
+        "ambiant": 0.25,
         "final": 0.7,
         "fadeInMs": 3000,
         "fadeOutMs": 10000,
-        "botthinkFadeOut": 1200,
-        "stopFadeOut": 1500,
+        "botthinkFadeOut": 2000,
+        "stopFadeOut": 5000,
         "path": "../sounds/"
     }
 }

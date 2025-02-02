@@ -161,8 +161,10 @@ cython_debug/
 /secret/*.json
 /logs/*.log
 /sounds/*.wav
+/sounds/old/*.wav
 /test
 Server/processed-output.wav
 Server/output.wav
 /LitteBotLed/node_modules
 LitteBotLed/package-lock.json
+sounds/phoneRing.wav.asd

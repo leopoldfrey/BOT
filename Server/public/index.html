@@ -44,7 +44,7 @@
 
   </div>
   <script>
-    var DEBUG = false;
+    var DEBUG = true;
     const statusText = document.getElementById('status');
     var recognition;
 
@@ -52,6 +52,9 @@
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
+          //window.localStream = stream; // A
+          //window.localAudio = stream; // B
+          //window.localAudio.autoplay = true; // C
           // INIT webkitSpeechRecognition
           try {
             recognition = new webkitSpeechRecognition();
@@ -149,10 +152,15 @@
       } else if (data.command == "lang") {
         //console.log("change language :", data.value);
         lang = data.value;
-        if(DEBUG)
-          recognition.lang = "fr-FR";
-        else
-          recognition.lang = lang;
+        try{
+          if(DEBUG)
+            recognition.lang = "fr-FR";
+          else
+            recognition.lang = lang;
+        } catch (e) {
+          console.error(`No recognition for now: ${e}`);
+        }
+        
         //console.log($("#lang"));
         $("#lang").html(lang);
       } else if (data.command == "phone") {
@@ -230,10 +238,15 @@
         console.log("VOICE", data.voice,"speed", data.speed);
         $("#model").html(data.model);
         lang = data.lang;
-        if(DEBUG)
-          recognition.lang = "fr-FR";
-        else
-          recognition.lang = lang;
+        try{
+          if(DEBUG)
+            recognition.lang = "fr-FR";
+          else
+            recognition.lang = lang;
+        } catch (e) {
+          console.error(`no recognition for now : ${e}`);
+        }
+        
         $("#lang").html(lang);
         console.log("LANG", lang);
         $("#model").html(data.model);

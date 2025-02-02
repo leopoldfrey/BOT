@@ -33,24 +33,12 @@ class BotSound():
         self.phoneRing.set_volume(self.config['ring'])
         self.phoneHang = pygame.mixer.Sound(self.sound_path + "phoneHangES.wav")
         self.phoneHang.set_volume(self.config['hang'])
-        self.section1 = pygame.mixer.Sound(self.sound_path + "1.intro.wav")
+        self.section1 = pygame.mixer.Sound(self.sound_path + "quijote.wav")
         self.section1.set_volume(self.config['ambiant'])
-        self.section2 = pygame.mixer.Sound(self.sound_path + "2.seduction.wav")
-        self.section2.set_volume(self.config['ambiant'])
-        self.section3 = pygame.mixer.Sound(self.sound_path + "3.intermede.wav")
-        self.section3.set_volume(self.config['ambiant'])
-        self.section4 = pygame.mixer.Sound(self.sound_path + "4.provocation.wav")
-        self.section4.set_volume(self.config['ambiant'])
-        self.section5 = pygame.mixer.Sound(self.sound_path + "5.fuite.wav")
-        self.section5.set_volume(self.config['ambiant'])
-        self.section6 = pygame.mixer.Sound(self.sound_path + "6.epilogue.wav")
-        self.section6.set_volume(self.config['ambiant'])
-        self.end =      pygame.mixer.Sound(self.sound_path + "7.final.wav")
-        self.end.set_volume(self.config['final'])
 
         self.botthink = []
         for j in os.listdir(self.sound_path):
-            if j.__contains__('bot'):
+            if j.__contains__('don'):
                 s = pygame.mixer.Sound(self.sound_path + j)
                 s.set_volume(self.config['botthink'])
                 self.botthink.append(s)
@@ -60,8 +48,8 @@ class BotSound():
         if(address == '/phase'):
             self.botThink(args[0])
         elif(address == '/section'):
-            #self.section(args[0])
-            pass
+            self.section(args[0])
+            #pass
         elif(address == '/stop'):
             self.stop(args[0])
         elif(address == '/phone'):
@@ -86,20 +74,25 @@ class BotSound():
             print("[Sound] Play Intro")
             self.xfade(self.section1)
         elif section == 2:
-            print("[Sound] Play Séduction")
-            self.xfade(self.section2)
+            #print("[Sound] Play Séduction")
+            #self.xfade(self.section2)
+            pass
         elif section == 3:
-            print("[Sound] Play Intermède")
-            self.xfade(self.section3)
+            #print("[Sound] Play Intermède")
+            #self.xfade(self.section3)
+            pass
         elif section == 4:
-            print("[Sound] Play Provocation")
-            self.xfade(self.section4)
+            #print("[Sound] Play Provocation")
+            #self.xfade(self.section4)
+            pass
         elif section == 5:
-            print("[Sound] Play Fuite")
-            self.xfade(self.section5)
+            #print("[Sound] Play Fuite")
+            #self.xfade(self.section5)
+            pass
         elif section == 6:
-            print("[Sound] Play Épilogue")
-            self.xfade(self.section6)
+            #print("[Sound] Play Épilogue")
+            #self.xfade(self.section6)
+            pass
         else:
             self.stop(0)
 

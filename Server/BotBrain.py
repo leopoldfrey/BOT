@@ -3,6 +3,11 @@
 from pyosc import Client, Server
 from botLog import BotLog
 import os, signal, functools, socket, json, sys, random
+from unidecode import unidecode
+from difflib import SequenceMatcher
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 def asint(s):
     try: return int(s), ''
@@ -14,6 +19,8 @@ serverIP = "127.0.0.1"
 
 API_KEY_PATH = "../secret/mistral_api_key.json"
 api_key = ""
+
+SIMILAR = 0.85
 
 with open(API_KEY_PATH) as json_file:
     json_data = json.load(json_file)
@@ -90,6 +97,8 @@ class BotBrain:
 
         self.def_prompt = "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar en 2024, con resaca de mal humor y enfadado e intentas actualizarte haciendo preguntas sobre el mundo actual.  Intentas saber donde se encuentran las grandes aventuras de caballeros hoy, y buscas un nuevo escudero para acompanarte en tus futuras aventuras. Hablas con frases cortas, directas, con humor y a la primera persona. Haces preguntas a tu interlocutor para saber si podria ser un buen escudero para acompnarte en las proximas hazanas."
         
+        self.adios = ["adios", "adíos", "hasta luego", "nos vemos pronto", "hasta pronto", "hasta mañana", "hasta la vista", "ciao", "voy a colgar", "cuelgo" ]
+    
         self.filename = data
         self.loadData()
 
@@ -162,10 +171,30 @@ class BotBrain:
             self.log.logBot(self.curPart, self.lastresponse)
             self.osc_client.send('/lastresponse',self.lastresponse)
 
-    # c'est ici qu'il faut insérer le BOT, string "phrase" en entrée
-    def getResponse(self, phrase):
+    def preProcess(self, phrase):
         if phrase.startswith(" "):
             phrase = phrase[1:]
+        return unidecode(phrase.lower())
+
+    def checkAdios(self, phrase):
+        found = False
+        for i in range(len(self.adios)):
+            if phrase.rfind(self.adios[i]) != -1:
+                found = True
+            
+        if found:
+            print("ADIOS!")
+            return True
+        else:
+            return False
+
+    # c'est ici qu'il faut insérer le BOT, string "phrase" en entrée
+    def getResponse(self, phrase):
+        phrase = self.preProcess(phrase)
+
+        if self.checkAdios(phrase):
+            self.endConversation(phrase)
+            return None
             
         print("[BotBrain] user:",phrase)
 
@@ -195,7 +224,7 @@ class BotBrain:
                     print("NO FIRST, GENERATING...")
             except IndexError:
                 print("ERROR, NO MORE PARTS")
-                self.endConversation()
+                self.endConversation(phrase)
                 #self.lastresponse = 'adelante Sancho, hablamos luego!'
                 #self.log.logBot(self.curPart, self.lastresponse)
                 #self.osc_client.send('/end',self.lastresponse)
@@ -204,8 +233,12 @@ class BotBrain:
         prev = self.lastresponse
         try:
             self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
-            if(self.lastresponse == prev): 
+            #CHECK REPETITION
+            sim = similar(self.lastresponse, prev)
+            while sim > SIMILAR:
+                print("_____ SIMILARITY :",sim)
                 self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+                sim = similar(self.lastresponse, prev)
         except:
             print("¡¡¡Error!!!")
             self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])

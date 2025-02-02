@@ -12,7 +12,7 @@ from deepl_trans import translateFR, translateES, translate
 import functools
 print = functools.partial(print, flush=True)
 
-DEBUG = False
+DEBUG = True
 DEBUG2 = True
 
 import google.cloud.texttospeech as tts
@@ -207,8 +207,8 @@ class BotServer:
         #print("VOICES", self.list_voices)
 
         print("[Server] ___INIT TextToSpeech___")
-        TextToSpeech("Botophone", silent=True).start()
-
+        TextToSpeech("Hola", pitch=0.0, speed=1, voice="es-ES-Neural2-B", silent=True, lang="es-ES").start()
+        
         # print("[Server] ___INIT_RING___")
         # self.phoneCtrl = PhoneCtrl()
 
@@ -302,8 +302,9 @@ class BotServer:
             self.receiveResponse(args[0])
             self.endDialog()
         elif(address == '/video'):
-            self.video_client.send("/section", args[0])
-            self.sound_client.send("/section", args[0])
+            if(args[0] != 0):
+                self.video_client.send("/section", args[0])
+                self.sound_client.send("/section", args[0])
         elif(address == '/ip'):
             print("[Server] Brain IP :",str(args[0]))
             self.osc_client  = Client(args[0], 14001)

@@ -191,8 +191,8 @@ if __name__ == '__main__':
         # tts.synthesize(sys.argv[1])
     else:
         #v = get_voices("es-ES")
-        v = ['es-ES-Neural2-F','es-ES-Standard-E','es-ES-Studio-F','es-ES-Wavenet-B','es-ES-Wavenet-E']
-        text = "¿Quién es ese hombre que me trae ante sus presencias?"
+        v = ['es-ES-Neural2-B']
+        text = "cuelgue por favor"
         sp = 1
         pi = 0
         for i in range(len(v)):
