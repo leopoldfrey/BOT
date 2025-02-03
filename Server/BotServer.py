@@ -3,7 +3,7 @@ import bottle, os, time, json, webbrowser, sys
 from subprocess import Popen
 from sys import platform as _platform
 from bottle import static_file
-from gtts_synth import TextToSpeech
+from openai_synth3 import TextToSpeech
 from threading import Thread
 from websocket_server import WebsocketServer
 from pyosc import Client, Server
@@ -15,7 +15,7 @@ print = functools.partial(print, flush=True)
 DEBUG = False
 DEBUG2 = False
 
-import google.cloud.texttospeech as tts
+#import google.cloud.texttospeech as tts
 
 MAXRING = 30
 LANGUAGE = "es-ES"
@@ -190,24 +190,24 @@ class BotServer:
         self.voice = DEF_VOICE
         self.voiceOn = True
         self.lang = LANGUAGE
-        client = tts.TextToSpeechClient()
-        voices = client.list_voices()
-        self.list_voices = []
-        for voice in voices.voices:
-            if "fr-FR" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "es-ES" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "en-GB" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "en-US" in voice.language_codes:
-                self.list_voices.append(voice.name)
+        #client = tts.TextToSpeechClient()
+        #voices = client.list_voices()
+        #self.list_voices = []
+        #for voice in voices.voices:
+        #    if "fr-FR" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "es-ES" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "en-GB" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "en-US" in voice.language_codes:
+        #       self.list_voices.append(voice.name)
             #if self.lang in voice.language_codes:
             #    self.list_voices.append(voice.name)
         #print("VOICES", self.list_voices)
 
         print("[Server] ___INIT TextToSpeech___")
-        TextToSpeech("Hola", pitch=0.0, speed=1, voice="es-ES-Neural2-B", silent=True, lang="es-ES").start()
+        TextToSpeech("Hola", silent=True).start()
         
         # print("[Server] ___INIT_RING___")
         # self.phoneCtrl = PhoneCtrl()
@@ -483,7 +483,7 @@ class BotServer:
     def speak(self, txt):
         if self.voiceOn:
             # print("SPEAK", txt, "pitch", self.pitch, "speed", self.speed)
-            tts = TextToSpeech(txt, pitch=self.pitch, speed=self.speed, voice=self.voice, lang=self.lang)
+            tts = TextToSpeech(txt)
             tts.start()
             self.tg.addThread(tts)
         else:
@@ -675,18 +675,18 @@ class BotServer:
         self.updateParams()
 
     def getVoices(self):
-        client = tts.TextToSpeechClient()
-        voices = client.list_voices()
+        #client = tts.TextToSpeechClient()
+        #voices = client.list_voices()
         self.list_voices = []
-        for voice in voices.voices:
-            if "fr-FR" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "es-ES" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "en-GB" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "en-US" in voice.language_codes:
-                self.list_voices.append(voice.name)
+        #for voice in voices.voices:
+        #    if "fr-FR" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "es-ES" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "en-GB" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "en-US" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
             #if self.lang in voice.language_codes:
             #    self.list_voices.append(voice.name)
         #print("VOICES", self.list_voices)
@@ -707,18 +707,18 @@ class BotServer:
         self.voice = self.config['voice']
         print("SET VOICE", self.voice)
 
-        client = tts.TextToSpeechClient()
-        voices = client.list_voices()
+        #client = tts.TextToSpeechClient()
+        #voices = client.list_voices()
         self.list_voices = []
-        for voice in voices.voices:
-            if "fr-FR" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "es-ES" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "en-GB" in voice.language_codes:
-                self.list_voices.append(voice.name)
-            if "en-US" in voice.language_codes:
-                self.list_voices.append(voice.name)
+        #for voice in voices.voices:
+        #    if "fr-FR" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "es-ES" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "en-GB" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
+        #    if "en-US" in voice.language_codes:
+        #        self.list_voices.append(voice.name)
         #print("VOICES", self.list_voices)
         self.wsServer.broadcast({"command":"voices","value":self.list_voices})
         self.wsServer.broadcast({"command":"lang", "value":self.lang})
