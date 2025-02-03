@@ -17,7 +17,7 @@ print = functools.partial(print, end='\n',flush=True)
 
 serverIP = "127.0.0.1"
 
-API_KEY_PATH = "../secret/mistral_api_key.json"
+API_KEY_PATH = "../secret/openai_api_key.json"
 api_key = ""
 
 SIMILAR = 0.85
@@ -31,10 +31,10 @@ from langchain.memory import (
     CombinedMemory,
     ConversationBufferMemory,
     ConversationBufferWindowMemory,
-    
+
 )
 from langchain_core.prompts import PromptTemplate
-from langchain_mistralai.chat_models import ChatMistralAI
+from langchain_openai.chat_models import ChatOpenAI
 
 def contains(str, substr):
     if substr:
@@ -57,35 +57,10 @@ class BotBrain:
         self.osc_server = Server(self.ip, 14001, self.oscIn)
         self.osc_client = Client(serverIP, 14000) #"127.0.0.1"
         self.osc_client.send("/ip", self.ip)
-        
+
         self.log = BotLog()
         self.curStep = 0
         self.curPart = 0
-        
-        self.summary_prompt = """Progresivamente resume las líneas de conversación proporcionadas, \
-        añadiendo al resumen anterior y devolviendo un nuevo resumen.
-
-        EXAMPLE
-        Resumen actual:
-        El humano pregunta qué piensa la IA sobre la inteligencia artificial. \
-        La IA cree que la inteligencia artificial es una fuerza para el bien.
-
-        Nuevas líneas de conversación:
-        Humano: ¿Por qué crees que la inteligencia artificial es una fuerza para el bien?
-        IA: Porque la inteligencia artificial ayudará a los humanos a alcanzar su máximo potencial.
-
-        Nuevo resumen:
-        El humano pregunta qué piensa la IA sobre la inteligencia artificial. \
-        La IA cree que la inteligencia artificial es una fuerza para el bien porque ayudará a los humanos a alcanzar su máximo potencial.
-        FIN DEL EJEMPLO
-
-        Resumen actual:
-        {summary}
-
-        Nuevas líneas de conversación:
-        {new_lines}
-
-        Nuevo resumen:"""
 
         self.ai_prefix = "Don Quijote:"
         self.human_prefix = "Sancho:"
@@ -96,9 +71,9 @@ class BotBrain:
         Don Quijote:"""
 
         self.def_prompt = "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar en 2024, con resaca de mal humor y enfadado e intentas actualizarte haciendo preguntas sobre el mundo actual.  Intentas saber donde se encuentran las grandes aventuras de caballeros hoy, y buscas un nuevo escudero para acompanarte en tus futuras aventuras. Hablas con frases cortas, directas, con humor y a la primera persona. Haces preguntas a tu interlocutor para saber si podria ser un buen escudero para acompnarte en las proximas hazanas."
-        
+
         self.adios = ["adios", "adíos", "hasta luego", "nos vemos pronto", "hasta pronto", "hasta mañana", "hasta la vista", "ciao", "voy a colgar", "cuelgo" ]
-    
+
         self.filename = data
         self.loadData()
 
@@ -118,7 +93,8 @@ class BotBrain:
             input_variables=["input", "chat_history_lines"],
             template=self.conversation_prompt,
         )
-        self.llm = ChatMistralAI(api_key=api_key, model=self.model)
+        print("WITH MODEL:", self.model)
+        self.llm = ChatOpenAI(api_key=api_key, model=self.model)
         self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
 
     def addPrompt(self, prompt):
@@ -144,7 +120,8 @@ class BotBrain:
             self.human_prefix = data['settings']['username']
             self.ai_prefix = data['settings']['botname']
             self.endPrompt = data['settings']['end_prompt']
-            
+            self.model = data['settings']['model']
+
         #print("\tSequence:", type(self.sequence), self.sequence)
         #print("\t0:", self.sequence[0])
         self.def_prompt = self.sequence[0]['prompt']
@@ -181,7 +158,7 @@ class BotBrain:
         for i in range(len(self.adios)):
             if phrase.rfind(self.adios[i]) != -1:
                 found = True
-            
+
         if found:
             print("ADIOS!")
             return True
@@ -195,11 +172,11 @@ class BotBrain:
         if self.checkAdios(phrase):
             self.endConversation(phrase)
             return None
-            
+
         print("[BotBrain] user:",phrase)
 
         self.log.logMe(phrase)
-        
+
         self.curStep += 1
         print(">>", self.curStep, "/", self.sequence[self.curPart]['nb_inter'])
         if self.curStep > int(self.sequence[self.curPart]["nb_inter"]) and int(self.sequence[self.curPart]["nb_inter"] != -1):
@@ -250,7 +227,7 @@ class BotBrain:
 
     def postProcess(self, str):
         return (str.split("Sancho :")[0]).split("Sancho:")[0]
-        
+
 
     # fin de conversation déclenchée par le controleur principal (temps max ou nombre d'interactions max)
     def endConversation(self, phrase):
