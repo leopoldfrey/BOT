@@ -8,7 +8,7 @@
         "speed": 1.0,
         "voice": "es-ES-Neural2-B",
         "lang": "es-ES",
-        "model": "ft:mistral-small-latest:a8c72c9e:20240627:1267b6a8",
+        "model": "ft:gpt-4o-mini-2024-07-18:personal:quijote-10interactions:AwdjqR1Y:ckpt-step-1408",
         "botname": "Don Quijote",
         "username": "Sancho",
         "end_prompt": "Conversacion actual:\n{chat_history_lines}\nSancho: {input}\nDon Quijote:"
@@ -36,7 +36,7 @@
     },
     "sequence": {
         "0": {
-            "prompt": "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar con la resaca de tres siglos de suenos en 2025 e intentas entender porqu\u00e9. Hablas con frases cortas, directas, con humor y a la primera persona. ",
+            "prompt": "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar con la resaca de tres siglos de sueños en 2025 e intentas entender porque. Hablas con frases cortas, directas, con humor y a la primera persona. Pretende que estas enfadado y de mal humor. Pretende que estas harto de que la ficción no se tome en serio. Pretende que vas a declarar el mundo ficcional como sola realidad. Y a la ficcion realidad. Y a la imaginacion la unica forma noble de pensamiento. Pides a tu interlocutor que te ayude a encontrar un escudero.",
             "first": "",
             "nb_inter": "0",
             "dur_max": "",
@@ -86,9 +86,9 @@
         }
     },
     "sound": {
-        "ring": 0.1,
-        "hang": 0.1,
-        "botthink": 0.6,
+        "ring": 5,
+        "hang": 0.6,
+        "botthink": 0.7,
         "ambiant": 0.25,
         "final": 0.7,
         "fadeInMs": 3000,
