@@ -18,7 +18,7 @@ def get_voices(lang):
 # Constants
 DELIMITERS = [f"{d} " for d in (".", "?", "!")]  # Determine where one phrase ends
 MINIMUM_PHRASE_LENGTH = 200  # Minimum length of phrases to minimize audio choppiness
-TTS_CHUNK_SIZE = 1024
+TTS_CHUNK_SIZE = 2048
 
 # Default values
 DEFAULT_TTS_MODEL = "tts-1"
@@ -31,6 +31,10 @@ with open(API_KEY_PATH) as json_data:
 os.environ['OPENAI_API_KEY'] = data['key']
 
 OPENAI_CLIENT = openai.OpenAI()
+
+p = pyaudio.PyAudio()
+player_stream = p.open(format=pyaudio.paInt16, channels=1, rate=24000, output=True)
+
 
 # Global stop event
 
@@ -170,22 +174,20 @@ class TextToSpeech(Thread):
 
     def audio_player(self, audio_queue: queue.Queue):
         """Plays audio from the audio queue."""
-        p = pyaudio.PyAudio()
-        player_stream = p.open(format=pyaudio.paInt16, channels=1, rate=24000, output=True)
 
-        try:
-            while not self.stop_event.is_set():
-                audio_data = audio_queue.get()
-                # got the sentinel value that there's nothing more coming, so exit
-                if audio_data is None:
-                    break
-                player_stream.write(audio_data)
-        except Exception as e:
-            print(f"Error in audio_player: {e}")
-        finally:
-            player_stream.stop_stream()
-            player_stream.close()
-            p.terminate()
+        #try:
+        while not self.stop_event.is_set():
+            audio_data = audio_queue.get()
+            # got the sentinel value that there's nothing more coming, so exit
+            if audio_data is None:
+                break
+            player_stream.write(audio_data)
+        #except Exception as e:
+        #    print(f"Error in audio_player: {e}")
+        #finally:
+        #    player_stream.stop_stream()
+        #    player_stream.close()
+        #    p.terminate()
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
