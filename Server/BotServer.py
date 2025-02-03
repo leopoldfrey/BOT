@@ -12,8 +12,8 @@ from deepl_trans import translateFR, translateES, translate
 import functools
 print = functools.partial(print, flush=True)
 
-DEBUG = True
-DEBUG2 = True
+DEBUG = False
+DEBUG2 = False
 
 import google.cloud.texttospeech as tts
 
