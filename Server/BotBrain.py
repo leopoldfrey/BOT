@@ -94,7 +94,7 @@ class BotBrain:
             template=self.conversation_prompt,
         )
         print("WITH MODEL:", self.model)
-        self.llm = ChatOpenAI(api_key=api_key, model=self.model, temperature=1, top_p=1, frequency_penalty=0, presence_penalty=0)
+        self.llm = ChatOpenAI(api_key=api_key, model=self.model, temperature=0.9, top_p=1, frequency_penalty=0, presence_penalty=0)
         self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
 
     def addPrompt(self, prompt):
@@ -197,6 +197,7 @@ class BotBrain:
                     self.lastresponse = self.sequence[self.curPart]['first']
                     self.log.logBot(self.curPart, self.lastresponse)
                     self.osc_client.send('/lastresponse',self.lastresponse)
+                    return None
                 else:
                     print("NO FIRST, GENERATING...")
             except IndexError:
