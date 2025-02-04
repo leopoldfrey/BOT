@@ -22,7 +22,7 @@ def get_voices(lang):
 # Constants
 DELIMITERS = [f"{d} " for d in (".", "?", "!")]  # Determine where one phrase ends
 MINIMUM_PHRASE_LENGTH = 200  # Minimum length of phrases to minimize audio choppiness
-TTS_CHUNK_SIZE = 1024
+TTS_CHUNK_SIZE = 4096
 
 # Default values
 DEFAULT_TTS_MODEL = "tts-1"
@@ -36,20 +36,18 @@ os.environ['OPENAI_API_KEY'] = data['key']
 
 OPENAI_CLIENT = openai.OpenAI()
 
-p = pyaudio.PyAudio()
-player_stream = p.open(format=pyaudio.paInt16, channels=1, rate=24000, output=True)
-
 
 # Global stop event
 
 class TextToSpeech(Thread):
-    def __init__(self, text, silent=False):
+    def __init__(self, text, stream, silent=False):
         Thread.__init__(self)
         print("[Server] [TextToSpeech]",len(text), text)
         self.text = text
         self._running = True
         self.silent = silent
         self.pid = 0
+        self.player_stream = stream
         self.stop_event = threading.Event()
 
     def stop(self):
@@ -185,7 +183,7 @@ class TextToSpeech(Thread):
             # got the sentinel value that there's nothing more coming, so exit
             if audio_data is None:
                 break
-            player_stream.write(audio_data)
+            self.player_stream.write(audio_data)
         #except Exception as e:
         #    print(f"Error in audio_player: {e}")
         #finally:
@@ -194,10 +192,13 @@ class TextToSpeech(Thread):
         #    p.terminate()
 
 if __name__ == "__main__":
+
+    player_stream = pyaudio.PyAudio().open(format=pyaudio.paInt16, channels=1, rate=24000, output=True)
+
     if len(sys.argv) == 2:
-        thd = TextToSpeech(sys.argv[1])
+        thd = TextToSpeech(sys.argv[1], player_stream)
         thd.start()
     else:
         text = "Pretende que estas enfadado y de mal humor. Pretende que estas harto de que la ficcion no se tome enserio. Pretende que vas a declarar el mundo ficcional como sola realidad. Y a la ficcion realidad. Y a la imaginacion la unica forma noble de pensamiento."
-        thd = TextToSpeech(text = text)
+        thd = TextToSpeech(text, player_stream)
         thd.start()

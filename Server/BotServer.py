@@ -8,6 +8,7 @@ from threading import Thread
 from websocket_server import WebsocketServer
 from pyosc import Client, Server
 from deepl_trans import translateFR, translateES, translate
+import pyaudio
 
 import functools
 print = functools.partial(print, flush=True)
@@ -207,7 +208,9 @@ class BotServer:
         #print("VOICES", self.list_voices)
 
         print("[Server] ___INIT TextToSpeech___")
-        TextToSpeech("Hola", silent=True).start()
+        self.player_stream = pyaudio.PyAudio().open(format=pyaudio.paInt16, channels=1, rate=24000, output=True)
+
+        TextToSpeech("Hola",  self.player_stream, silent=True).start()
         
         # print("[Server] ___INIT_RING___")
         # self.phoneCtrl = PhoneCtrl()
@@ -483,7 +486,7 @@ class BotServer:
     def speak(self, txt):
         if self.voiceOn:
             # print("SPEAK", txt, "pitch", self.pitch, "speed", self.speed)
-            tts = TextToSpeech(txt)
+            tts = TextToSpeech(txt, self.player_stream)
             tts.start()
             self.tg.addThread(tts)
         else:
