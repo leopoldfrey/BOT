@@ -208,7 +208,7 @@ class BotServer:
         #print("VOICES", self.list_voices)
 
         print("[Server] ___INIT TextToSpeech___")
-        self.player_stream = pyaudio.PyAudio().open(format=pyaudio.paInt16, channels=1, rate=24000, output=True)
+        self.player_stream = pyaudio.PyAudio().open(format=8, channels=1, rate=24000, output=True)
 
         TextToSpeech("Hola",  self.player_stream, silent=True).start()
         
