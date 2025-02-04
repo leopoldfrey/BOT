@@ -334,6 +334,7 @@ class BotServer:
     def end(self):
         self.flagWaitEnd = False
         print("[Server] END > RESTART")
+        time.sleep(10)
         # self.led_client.send("/on", 0)
         self.sound_client.send("/stop", 0)
         self.userDetected = False
