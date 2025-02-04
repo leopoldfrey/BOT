@@ -3,13 +3,15 @@ import bottle, os, time, json, webbrowser, sys
 from subprocess import Popen
 from sys import platform as _platform
 from bottle import static_file
-from gtts_synth import TextToSpeech
-#from openai_synth3 import TextToSpeech
 from threading import Thread
 from websocket_server import WebsocketServer
 from pyosc import Client, Server
 #from deepl_trans import translateFR, translateES, translate
-#import pyaudio
+#GOOGLE TTS
+#from gtts_synth import TextToSpeech
+#OPENAI TTS
+from openai_synth4 import TextToSpeech
+import pyaudio
 
 import functools
 print = functools.partial(print, flush=True)
@@ -17,7 +19,6 @@ print = functools.partial(print, flush=True)
 DEBUG = False
 DEBUG2 = False
 
-#import google.cloud.texttospeech as tts
 
 MAXRING = 30
 LANGUAGE = "es-ES"
@@ -207,12 +208,15 @@ class BotServer:
         #print("VOICES", self.list_voices)
 
         print("[Server] ___INIT TextToSpeech___")
-        #self.player_stream = pyaudio.PyAudio().open(format=8, channels=1, rate=24000, output=True)
-        #TextToSpeech("Hola",  self.player_stream, silent=True).start()
-        TextToSpeech("Hola", silent=True).start()
+        self.player_stream = pyaudio.PyAudio().open(format=8, channels=1, rate=24000, output=True)
+        self.tts = TextToSpeech("Hola",  self.player_stream)
+        #print("STREAM OUTPUT LATENCY", self.player_stream.get_output_latency())
+        #print("STREAM INPUT LATENCY", self.player_stream.get_input_latency())
+        #print("STREAM TIME", self.player_stream.get_time())
+        print("DONE TALKING")
+        #TextToSpeech("Hola", silent=True).start()
         
         # print("[Server] ___INIT_RING___")
-        # self.phoneCtrl = PhoneCtrl()
 
         #websocket
         print("[Server] ___STARTING WEBSOCKETSERVER___")
@@ -220,9 +224,9 @@ class BotServer:
         self.wsServer.start()
 
         #threadgroup (pour surveiller la fin de la synthèse vocale)
-        print("[Server] ___INIT THREADGROUP___")
-        self.tg = ThreadGroup(self)
-        self.tg.start()
+        #print("[Server] ___INIT THREADGROUP___")
+        #self.tg = ThreadGroup(self)
+        #self.tg.start()
 
         print("[Server] ___STARTING OSC___")
         self.osc_server = Server('0.0.0.0', 14000, self.oscIn)
@@ -297,8 +301,12 @@ class BotServer:
         if(address == '/lastresponse'):
             self.receiveResponse(args[0])
         elif(address == '/end'):
+            self.sound_client.send("/stop", 1)
+            self.flagWaitEnd = True
             self.receiveResponse(args[0])
-            self.endDialog()
+            self.silent = True
+            self.wsServer.broadcast({'command':'silent','value':self.silent})
+
         elif(address == '/option'):
             if(args[0] != 0):
                 self.sound_client.send("/section", args[0])
@@ -317,7 +325,7 @@ class BotServer:
                 print("     ",str(args[x]))
 
     def reload(self):
-        self.tg.stop()
+        #self.tg.stop()
         self.userDetected = False
         self.phone = False
         self.end()
@@ -327,7 +335,7 @@ class BotServer:
     def end(self):
         self.flagWaitEnd = False
         print("[Server] END > RESTART")
-        time.sleep(12)
+        time.sleep(15)
         # self.led_client.send("/on", 0)
         self.sound_client.send("/stop", 0)
         self.userDetected = False
@@ -336,13 +344,6 @@ class BotServer:
         if self.phone :
             self.phoneHang()
         time.sleep(30)
-
-    def endDialog(self):
-        print("[Server] WAIT FOR END")
-        self.flagWaitEnd = True
-        self.silent = True
-        self.wsServer.broadcast({'command':'silent','value':self.silent})
-        self.sound_client.send("/stop", 1)
 
     def facedetect(self, v):
         if self.on :
@@ -381,7 +382,6 @@ class BotServer:
                 if self.phone :
                     self.phoneHang()
                 else:
-                    # self.phoneCtrl.stop()
                     self.sound_client.send("/phone", "stop")
 
     def phoneOn(self):
@@ -394,7 +394,6 @@ class BotServer:
             self.phoneHang()
         else:
             self.reset()
-            # self.phoneCtrl.stop()
             self.sound_client.send("/phone", "stop")
             self.on = True
             self.phone = True
@@ -410,29 +409,27 @@ class BotServer:
         if self.phone == False:
             return
         print("[Server] PHONE OFF")
+        self.tts.stop()
+        self.phone = False
         if self.flagWaitEnd :
-            self.phone = False
+            #print("[Server] PHONE OFF flagWaitEnd")
+            pass
         elif self.waitHangPhone :
-            self.phone = False
+            #print("[Server] PHONE OFF waitHangPhone")
             self.waitHangPhone = False
-            # self.phoneCtrl.ring()
-            # TODO COUNT PHONE RING
             self.ringTime = time.time()
             self.sound_client.send("/phone", "ring")
         elif self.on :
-            # self.phoneCtrl.stop()
+            #print("[Server] PHONE OFF on")
             self.sound_client.send("/phone", "stop")
             self.sound_client.send("/stop", 0)
-            self.tg.stop()
-            self.phone = False
             self.silent = True
             self.userDetected = False
             self.reset()
         else:
+            #print("[Server] PHONE OFF else")
             self.sound_client.send("/phone", "stop")
             self.sound_client.send("/stop", 0)
-            self.tg.stop()
-            self.phone = False
             self.silent = True
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.wsServer.broadcast({"command":"phone","value":self.phone})
@@ -441,7 +438,6 @@ class BotServer:
 
     def phoneHang(self):
         print("[Server] RACCROCHEZ")
-        # self.phoneCtrl.hang()
         self.sound_client.send("/phone", "hang")
 
     def reco(self):
@@ -474,10 +470,11 @@ class BotServer:
     def speak(self, txt):
         if self.voiceOn:
             # print("SPEAK", txt, "pitch", self.pitch, "speed", self.speed)
-            #tts = TextToSpeech(txt, self.player_stream)
-            tts = TextToSpeech(txt)
-            tts.start()
-            self.tg.addThread(tts)
+            self.tts = TextToSpeech(txt, self.player_stream)
+            self.endSpeak()
+            #tts = TextToSpeech(txt)
+            #tts.start()
+            #self.tg.addThread(tts)
         else:
             self.sound_client.send("/phase", 0)
             self.lastInteractionTime = time.time()
@@ -500,13 +497,39 @@ class BotServer:
                 self.silent = False
                 self.wsServer.broadcast({'command':'silent','value':False})
 
+    def endSpeak(self):
+        self.lastInteractionTime = time.time()
+        #print("END OF SYNTH THREAD")
+        #self.thread_group.remove(t)
+        if(self.on == False):
+            #print("OFF!!!")
+            pass
+        elif(self.flagWaitEnd == True):
+            #print("[Server] WAIT END")
+            self.silent = True
+            self.end()
+            self.wsServer.broadcast({'command':'silent','value':True})
+        elif(self.flagUserLost == True):
+            #print("[Server] USER LOST")
+            self.flagWaitUser = False
+            self.areYouThere()
+        elif(self.flagWaitUser == True):
+            #print("[Server] WAIT USER")
+            self.silent = False
+            self.wsServer.broadcast({'command':'silent','value':False})
+        else:
+            #print("REDONNE LA PAROLE !!!")
+            self.silent = False
+            self.wsServer.broadcast({'command':'silent','value':False})
+
     def voiceEnable(self, v):
         self.voiceOn = v
-        if self.voiceOn == False :
-            self.tg.stop()
+        #if self.voiceOn == False :
+        #    self.tg.stop()
 
     def receiveResponse(self, r):
-        if self.on and not self.flagWaitEnd:
+        #print("SERVER receiveResponse OFF", r, self.flagWaitEnd)
+        if self.on: # and not self.flagWaitEnd:
             self.tmp_response = r
             if(self.flagUserLost):
                 self.flagUserLost = False
