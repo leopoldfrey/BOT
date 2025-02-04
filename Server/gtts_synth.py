@@ -48,7 +48,7 @@ def get_voices(lang):
     return VOICE
 
 class TextToSpeech(Thread):
-    def __init__(self, text, pitch=0.0, speed=1.08, voice="en-GB-Neural2-A", silent=False, lang="en-GB"):
+    def __init__(self, text, pitch=0.0, speed=1.08, voice="es-ES-Neural2-B", silent=False, lang="es-ES"):
         Thread.__init__(self)
         print("[Server] [TextToSpeech]", pitch, speed, voice)
         self.language_code = lang
