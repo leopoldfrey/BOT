@@ -47,6 +47,7 @@ class BotSound():
         self.botthinkCopy = self.botthink.copy()
 
     def oscIn(self, address, *args):
+        #print("[Sound] OSC IN : "+str(address))
         if(address == '/phase'):
             self.botThink(args[0])
         elif(address == '/section'):

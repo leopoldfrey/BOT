@@ -72,7 +72,7 @@ class BotBrain:
 
         self.def_prompt = "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar en 2024, con resaca de mal humor y enfadado e intentas actualizarte haciendo preguntas sobre el mundo actual.  Intentas saber donde se encuentran las grandes aventuras de caballeros hoy, y buscas un nuevo escudero para acompanarte en tus futuras aventuras. Hablas con frases cortas, directas, con humor y a la primera persona. Haces preguntas a tu interlocutor para saber si podria ser un buen escudero para acompnarte en las proximas hazanas."
 
-        self.adios = ["adios", "adíos", "hasta luego", "nos vemos pronto", "hasta pronto", "hasta mañana", "hasta la vista", "ciao", "chao", "voy a colgar", "cuelgo" ]
+        self.adios = ["adios", "adíos", "hasta luego", "nos vemos pronto", "hasta pronto", "hasta mañana", "hasta la vista", "hasta la proxima", "ciao", "chao", "voy a colgar", "cuelgo" ]
 
         self.filename = data
         self.loadData()
@@ -133,8 +133,8 @@ class BotBrain:
         self.curStep = 0
         self.curPart = 1
         print("CURRENT PART", self.curPart, self.sequence[self.curPart])
-        print("\t------> video", self.sequence[self.curPart]['video'])
-        self.osc_client.send('/video',int(self.sequence[self.curPart]['video']))
+        print("\t------> option", self.sequence[self.curPart]['option'])
+        self.osc_client.send('/option',int(self.sequence[self.curPart]['option']))
         self.resetMemory()
         self.addPrompt(self.sequence[self.curPart]['prompt'])
         self.log.start()
@@ -186,8 +186,8 @@ class BotBrain:
                 print("CURRENT PART", self.curPart, self.sequence[self.curPart])
                 print("\t------> interaction", self.sequence[self.curPart]['nb_inter'])
                 #print("\t------> duration", self.sequence[self.curPart]['dur_max'])
-                print("\t------> video", self.sequence[self.curPart]['video'])
-                self.osc_client.send('/video',int(self.sequence[self.curPart]['video']))
+                print("\t------> option", self.sequence[self.curPart]['option'])
+                self.osc_client.send('/option',int(self.sequence[self.curPart]['option']))
                 print("\t------> prompt", self.sequence[self.curPart]['prompt'])
                 if(self.sequence[self.curPart]['prompt']):
                     self.addPrompt(self.sequence[self.curPart]['prompt'])

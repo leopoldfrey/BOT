@@ -142,13 +142,13 @@ class BotEditor():
             #print("modSequence",idx)
 
             if idx not in self.data:
-                self.data['sequence'][idx] = {'prompt':'', 'first': '', 'nb_inter' : '', 'dur_max': '', 'video': ''}
+                self.data['sequence'][idx] = {'prompt':'', 'first': '', 'nb_inter' : '', 'dur_max': '', 'option': ''}
                 
             self.data['sequence'][idx]['prompt'] = j['prompt']
             self.data['sequence'][idx]['first'] = j['first']
             self.data['sequence'][idx]['nb_inter'] = j['nb_inter']
             #self.data['sequence'][idx]['dur_max'] = j['dur_max']
-            self.data['sequence'][idx]['video'] = j['video']
+            self.data['sequence'][idx]['option'] = j['option']
             
             self.save()
 

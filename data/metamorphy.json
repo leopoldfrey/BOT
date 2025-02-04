@@ -31,28 +31,28 @@
             "first": "",
             "nb_inter": "0",
             "dur_max": "60",
-            "video": "0"
+            "option": "0"
         },
         "1": {
             "prompt": "you are happy",
             "first": "Hello, I'm metamophy",
             "nb_inter": "4",
             "dur_max": "60",
-            "video": "1"
+            "option": "1"
         },
         "2": {
             "prompt": "you are excited",
             "first": "",
             "nb_inter": "3",
             "dur_max": "60",
-            "video": "2"
+            "option": "2"
         },
         "3": {
             "prompt": "you are bored",
             "first": "",
             "nb_inter": "3",
             "dur_max": "60",
-            "video": "3"
+            "option": "3"
         }
     },
     "sound": {

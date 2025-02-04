@@ -75,7 +75,7 @@ function fillContents(data) {
       $("#info").html("Sequence ("+len+")");
       $("#sentences").removeClass("selbut");
       $("#sequence").addClass("selbut");
-      $header.append("<th scope='col'>Part</th><th scope='col'>Prompt</th><th scope='col'>First</th><th scope='col'>Max Interactions</th><th scope='col'>Video Sequence</th>"); //<th scope='col'>Max Duration (s)</th>
+      $header.append("<th scope='col'>Part</th><th scope='col'>Prompt</th><th scope='col'>First</th><th scope='col'>Max Interactions</th><th scope='col'>Options</th>"); //<th scope='col'>Max Duration (s)</th>
       break;
     case "sentences":
       $("#info").html("Characters ("+len+")");
@@ -97,7 +97,7 @@ function fillContents(data) {
             "<td class='ContentElem contentFirst'>" + ContentsData[idx]["first"] + "</td>"+
             "<td class='ContentElem contentInter'>" + ContentsData[idx]["nb_inter"] + "</td>"+
             /*"<td class='ContentElem contentDur'>" + ContentsData[idx]["dur_max"] + "</td>"+*/
-            "<td class='ContentElem contentVideo'>" + ContentsData[idx]["video"] + "</td>"+
+            "<td class='ContentElem contentOption'>" + ContentsData[idx]["option"] + "</td>"+
             "</tr>");
           break;
         case "sentences":
@@ -249,7 +249,7 @@ $("#plus").click(function(){
           "<td class='ContentElem contentFirst'></td>"+
           "<td class='ContentElem contentInter'></td>"+
         /* "<td class='ContentElem contentDur'></td>"+*/
-          "<td class='ContentElem contentVideo'></td>"+
+          "<td class='ContentElem contentOption'></td>"+
           "</tr>");
         break;
   }
@@ -327,7 +327,7 @@ function edit()
       $("#first").val(currRow.children(".contentFirst").html());
       $("#nb_inter").val(currRow.children(".contentInter").html());
       /*$("#dur_max").val(currRow.children(".contentDur").html());*/
-      selectElement("video", currRow.children(".contentVideo").html());
+      selectElement("option", currRow.children(".contentOption").html());
       $("#mb-Sequence").show();
       setTimeout(function(){$("#prompt").focus();}, 500);
       break;
@@ -354,7 +354,7 @@ function validContent(ev) {
       currRow.children(".contentFirst").html($("#first").val());
       currRow.children(".contentInter").html($("#nb_inter").val());
       /*currRow.children(".contentDur").html($("#dur_max").val());*/
-      currRow.children(".contentVideo").html($("#video").val());
+      currRow.children(".contentOption").html($("#option").val());
       break;
   }
   modalContent.modal('hide');
@@ -375,7 +375,7 @@ function save() {
           "first": escape(currRow.children(".contentFirst").html()),
           "nb_inter": escape(currRow.children(".contentInter").html()),
           /*"dur_max": escape(currRow.children(".contentDur").html()),*/
-          "video": escape(currRow.children(".contentVideo").html()),
+          "option": escape(currRow.children(".contentOption").html()),
         }),
         success: function(response) {
             console.log(response['msg']);

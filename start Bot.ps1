@@ -4,14 +4,12 @@
 $host.UI.RawUI.ForegroundColor = "Magenta"
 Write-Output "Starting Sound"
 Start-Job -Name Sound -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
-  ../botenv/bin/Activate.ps1
   python ./BotSound.py
 }
 
 $host.UI.RawUI.ForegroundColor = "cyan"
 Write-Output "Starting Server"
 Start-Job -Name Server  -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
-    ../botenv/bin/Activate.ps1
     python ./BotServer.py
 }
 
@@ -19,8 +17,14 @@ $host.UI.RawUI.ForegroundColor = "Yellow"
 Write-Output "Starting Brain"
 Start-Job -Name Brain -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 3;
-  ../botenv/bin/Activate.ps1
-    python ./BotBrain.py
+  python ./BotBrain.py
+}
+
+$host.UI.RawUI.ForegroundColor = "Green"
+Write-Output "Starting Video"
+Start-Job -Name Video -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
+  Start-Sleep -Seconds 4;
+  open ../motion/quijote_detect.maxpat
 }
 
 While (Get-Job -State "Running")
@@ -31,6 +35,8 @@ While (Get-Job -State "Running")
   Receive-Job -Name Brain
   $host.UI.RawUI.ForegroundColor = "cyan"
   Receive-Job -Name Server
+  $host.UI.RawUI.ForegroundColor = "Green"
+  Receive-Job -Name Video
   Start-Sleep -Seconds 0.01
   If ($Host.UI.RawUI.KeyAvailable -and ($Key = $Host.UI.RawUI.ReadKey("AllowCtrlC,NoEcho,IncludeKeyUp"))) {
     If ([Int]$Key.Character -eq 3) {
@@ -39,9 +45,11 @@ While (Get-Job -State "Running")
       Stop-Job -Name Server
       Stop-Job -Name Brain
       Stop-Job -Name Sound
+      Stop-Job -Name Video
       Remove-Job -Name Server
       Remove-Job -Name Brain
       Remove-Job -Name Sound
+      Remove-Job -Name Video
     }
   }
 }

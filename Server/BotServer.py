@@ -8,7 +8,7 @@ from gtts_synth import TextToSpeech
 from threading import Thread
 from websocket_server import WebsocketServer
 from pyosc import Client, Server
-from deepl_trans import translateFR, translateES, translate
+#from deepl_trans import translateFR, translateES, translate
 #import pyaudio
 
 import functools
@@ -40,15 +40,17 @@ class ThreadGroup(Thread):
         while True:
             for t in self.thread_group[:]:
                 if not t.is_alive(): #isAlive
-                    # self.parent.video_client.send("/botspeak", 0)
-                    self.parent.video_client.send("/phase", 0)
-                    self.parent.sound_client.send("/phase", 0)
                     self.parent.lastInteractionTime = time.time()
-                    # print("END OF SYNTH THREAD")
+                    print("END OF SYNTH THREAD")
                     self.thread_group.remove(t)
                     if(self.parent.on == False):
-                        # print("OFF!!!")
+                        print("OFF!!!")
                         pass
+                    elif(self.parent.flagWaitEnd == True):
+                        print("[Server] WAIT END")
+                        self.parent.silent = True
+                        self.parent.end()
+                        self.parent.wsServer.broadcast({'command':'silent','value':True})
                     elif(self.parent.flagUserLost == True):
                         print("[Server] USER LOST")
                         self.flagWaitUser = False
@@ -57,12 +59,8 @@ class ThreadGroup(Thread):
                         print("[Server] WAIT USER")
                         self.parent.silent = False
                         self.parent.wsServer.broadcast({'command':'silent','value':False})
-                    elif(self.parent.flagWaitEnd == True):
-                        print("[Server] WAIT END")
-                        self.parent.silent = True
-                        self.parent.wsServer.broadcast({'command':'silent','value':True})
                     else:
-                        # print("REDONNE LA PAROLE !!!")
+                        print("REDONNE LA PAROLE !!!")
                         self.parent.silent = False
                         self.parent.wsServer.broadcast({'command':'silent','value':False})
 
@@ -230,7 +228,6 @@ class BotServer:
         self.osc_server = Server('0.0.0.0', 14000, self.oscIn)
         self.osc_client = Client('127.0.0.1', 14001)
         self.video_server = Server('127.0.0.1', 14002, self.video_oscIn)
-        self.video_client = Client('127.0.0.1', 14003)
         self.sound_client = Client('127.0.0.1', 14004)
         self.led_client = Client('127.0.0.1', 14005)
 
@@ -294,9 +291,6 @@ class BotServer:
         # print("VIDEO OSC IN ", address, args[0])
         if(address == '/facedetect'):
             self.facedetect(int(args[0]))
-        elif(address == '/end'):
-            if int(args[0]) == 1 : #fin vidéo finale
-                self.end()
 
     def oscIn(self, address, *args):
         #print("[Server] OSC IN ", address, args[0])
@@ -305,9 +299,8 @@ class BotServer:
         elif(address == '/end'):
             self.receiveResponse(args[0])
             self.endDialog()
-        elif(address == '/video'):
+        elif(address == '/option'):
             if(args[0] != 0):
-                self.video_client.send("/section", args[0])
                 self.sound_client.send("/section", args[0])
         elif(address == '/ip'):
             print("[Server] Brain IP :",str(args[0]))
@@ -334,7 +327,7 @@ class BotServer:
     def end(self):
         self.flagWaitEnd = False
         print("[Server] END > RESTART")
-        time.sleep(10)
+        time.sleep(12)
         # self.led_client.send("/on", 0)
         self.sound_client.send("/stop", 0)
         self.userDetected = False
@@ -342,13 +335,13 @@ class BotServer:
         time.sleep(1)
         if self.phone :
             self.phoneHang()
+        time.sleep(30)
 
     def endDialog(self):
         print("[Server] WAIT FOR END")
         self.flagWaitEnd = True
         self.silent = True
         self.wsServer.broadcast({'command':'silent','value':self.silent})
-        self.video_client.send("/stop", 1) # déclenchement vidéo finale
         self.sound_client.send("/stop", 1)
 
     def facedetect(self, v):
@@ -405,7 +398,6 @@ class BotServer:
             self.sound_client.send("/phone", "stop")
             self.on = True
             self.phone = True
-            self.video_client.send("/phone", 1)
             self.wsServer.broadcast({"command":"phone","value":self.phone})
             self.wsServer.broadcast({"command":"on","value":self.on})
             self.wsServer.broadcast({'command':'silent','value':self.silent})
@@ -420,11 +412,9 @@ class BotServer:
         print("[Server] PHONE OFF")
         if self.flagWaitEnd :
             self.phone = False
-            self.video_client.send("/phone", 0)
         elif self.waitHangPhone :
             self.phone = False
             self.waitHangPhone = False
-            # self.video_client.send("/phone", 0)
             # self.phoneCtrl.ring()
             # TODO COUNT PHONE RING
             self.ringTime = time.time()
@@ -435,7 +425,6 @@ class BotServer:
             self.sound_client.send("/stop", 0)
             self.tg.stop()
             self.phone = False
-            self.video_client.send("/phone", 0)
             self.silent = True
             self.userDetected = False
             self.reset()
@@ -444,7 +433,6 @@ class BotServer:
             self.sound_client.send("/stop", 0)
             self.tg.stop()
             self.phone = False
-            self.video_client.send("/phone", 0)
             self.silent = True
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.wsServer.broadcast({"command":"phone","value":self.phone})
@@ -468,15 +456,13 @@ class BotServer:
             # print("user:", mess)
             # self.lastInteractionTime = time.time()
             self.wsServer.broadcast({'command':'_user','value':mess})
-            self.video_client.send("/user", mess)
-            self.video_client.send("/phase", 1)
             self.sound_client.send("/phase", 1)
             self.silent = True
             self.relanceCount = 0
             self.wsServer.broadcast({'command':'silent','value':self.silent})
             # print("INTER", self.interactions)
-            if(DEBUG):
-                mess = translateES(mess)
+            #if(DEBUG):
+            #    mess = translateES(mess)
 
             if self.interactions >= self.maxinter :
                 self.osc_client.send("/end", mess)
@@ -493,7 +479,6 @@ class BotServer:
             tts.start()
             self.tg.addThread(tts)
         else:
-            self.video_client.send("/phase", 0)
             self.sound_client.send("/phase", 0)
             self.lastInteractionTime = time.time()
             if(self.on == False):
@@ -527,16 +512,12 @@ class BotServer:
                 self.flagUserLost = False
                 self.flagWaitUser = True
             # print("SERVER receiveResponse", self.tmp_response)
-            self.video_client.send("/phase", 2)
             self.sound_client.send("/phase", 2)
-            self.video_client.send("/bot", self.tmp_response)
             self.interactions += 1
-            self.video_client.send("/interactions", self.interactions)
             self.lastInteractionTime = time.time()
             self.wsServer.broadcast({'command':'_bot','value':self.tmp_response})
-            # print("INTERACTIONS", self.interactions % self.config["max_interactions"])
-            if(DEBUG or DEBUG2):
-                print(">>", translateFR(self.tmp_response))
+            #if(DEBUG or DEBUG2):
+            #    print(">>", translateFR(self.tmp_response))
             self.speak(self.tmp_response)
         else:
             print("SERVER receiveResponse OFF", r)
@@ -547,7 +528,6 @@ class BotServer:
     def relance(self):
         if(self.flagWaitUser):
             print("[Server] USER REALLY LOST > RESET")
-            self.video_client.send("/stop", 0)
             self.sound_client.send("/stop", 0)
             self.userDetected = False
             self.phoneHang()
@@ -560,7 +540,6 @@ class BotServer:
             print("[Server] Relance", self.relanceCount)
             if(self.relanceCount > self.config["max_relance_quit"]):
                 print("[Server] Relance >",self.config["max_relance_quit"],">> RESET")
-                self.video_client.send("/stop", 0)
                 self.sound_client.send("/stop", 0)
                 self.userDetected = False
                 self.phoneHang()
@@ -589,7 +568,6 @@ class BotServer:
         self.flagWaitUser = False
         self.flagWaitEnd = False
         self.relanceCount = 0
-        self.video_client.send("/interactions", self.interactions)
         self.wsServer.broadcast({'command':'clear'})
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.wsServer.broadcast({"command":"phone","value":self.phone})
@@ -597,7 +575,6 @@ class BotServer:
         self.wsServer.broadcast({"command":"facedetect","value":self.userDetected})
         self.silent = True
         self.osc_client.send("/newConversation", 1)
-        #self.sound_client.send("/section", random.randrange(1,6))
 
     def name(self, name):
         self.username = name
@@ -608,7 +585,6 @@ class BotServer:
             #print("RING TIME",time.time() - self.ringTime)
             if(time.time() - self.ringTime > MAXRING and time.time() - self.ringTime < 6 * MAXRING):
                 print("[Server] USER REALLY LOST > RESET")
-                self.video_client.send("/stop", 0)
                 self.sound_client.send("/stop", 0)
                 self.userDetected = False
                 self.phoneHang()

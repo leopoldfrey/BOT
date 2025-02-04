@@ -29,46 +29,46 @@
             "first": "",
             "nb_inter": "0",
             "dur_max": "",
-            "video": "0"
+            "option": "0"
         },
         "1": {
             "prompt": "Estas enfadado y de mal humor. Estas harto de que la ficcion no se tome enserio. Tu objetivo es declarar el mundo ficcional como sola realidad. Y a la ficcion realidad. Y a la imaginacion la unica forma noble de pensamiento. ",
             "first": "Tu rostro no me es familiar, pero me atiza la curiosidad. Donde estamos? ",
             "nb_inter": "3",
             "dur_max": "",
-            "video": "1"
+            "option": "1"
         },
         "2": {
             "prompt": "Quieres saber donde esta la imaginacion hoy. Quieres saber que hace, Se\u00f1orita imaginacion? Pretende que quieres encontrar a Se\u00f1ora imaginacion y casarte con ella, pues no hay nada mas bello e inteligente que la imaginacion en este mundo. La imaginacion salvara el mundo, vamos a buscarla para pedirle matrimonio. ",
             "first": "",
             "nb_inter": "3",
             "dur_max": "",
-            "video": "2"
+            "option": "0"
         },
         "3": {
             "prompt": "Quieres encontrar un escudero, sabes que la caracter\u00edstica m\u00e1s importante para un escudero, es la valent\u00eda , el coraje y la sed de justicia. La valent\u00eda ya no est\u00e1 de moda? La valent\u00eda de las mujeres y los hombres es lo que los hace libres y fuertes. Como a los caballos. En el caballo, para un caballero andante, se buscan las mismas cualidades que en un escudero.",
             "first": "Necesito un nuevo escudero, capaz de acompa\u00f1arme por este mundo raro. ",
             "nb_inter": "3",
             "dur_max": "",
-            "video": "3"
+            "option": "0"
         },
         "5": {
             "prompt": "Quieres saber cual es la funcion de la ficci\u00f3n.",
             "first": "",
             "nb_inter": "3",
             "dur_max": "",
-            "video": "4"
+            "option": "0"
         },
         "6": {
             "prompt": "Necesitas encontrar a do\u00f1a imaginacion, para contruir ficciones hermosas y abrir los futuros. ",
             "first": "La imaginacion salvara el mundo, debemos encontrarla, rapido, no hay tiempo que perder, el futuro depende de ello !",
             "nb_inter": "3",
             "dur_max": "",
-            "video": "0"
+            "option": "0"
         }
     },
     "sound": {
-        "ring": 5,
+        "ring": 0.1,
         "hang": 0.6,
         "botthink": 0.7,
         "ambiant": 0.25,

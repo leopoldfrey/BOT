@@ -31,28 +31,28 @@
             "first": "",
             "nb_inter": "0",
             "dur_max": "60",
-            "video": "0"
+            "option": "0"
         },
         "1": {
             "prompt": "tu eres feliz",
             "first": "Hola que tal !!!!",
             "nb_inter": "4",
             "dur_max": "60",
-            "video": "1"
+            "option": "1"
         },
         "2": {
             "prompt": "tu eres enojado",
             "first": "",
             "nb_inter": "3",
             "dur_max": "60",
-            "video": "2"
+            "option": "2"
         },
         "3": {
             "prompt": "tu eres cansado",
             "first": "bueno",
             "nb_inter": "3",
             "dur_max": "",
-            "video": "3"
+            "option": "3"
         }
     },
     "sound": {
