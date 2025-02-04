@@ -81,7 +81,7 @@ class BotBrain:
 
     def resetMemory(self):
         print("RESET MEMORY")
-        self.conv_memory = ConversationBufferWindowMemory(k=100,
+        self.conv_memory = ConversationBufferWindowMemory(k=50,
             memory_key="chat_history_lines", input_key="input",  ai_prefix=self.ai_prefix, human_prefix=self.human_prefix
         )
         self.memory = self.conv_memory
@@ -94,7 +94,7 @@ class BotBrain:
             template=self.conversation_prompt,
         )
         print("WITH MODEL:", self.model)
-        self.llm = ChatOpenAI(api_key=api_key, model=self.model, temperature=0.9, top_p=1, frequency_penalty=0, presence_penalty=0)
+        self.llm = ChatOpenAI(api_key=api_key, model=self.model, temperature=0.8, top_p=1, frequency_penalty=0, presence_penalty=0)
         self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
 
     def addPrompt(self, prompt):
