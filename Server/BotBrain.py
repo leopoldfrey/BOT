@@ -5,6 +5,7 @@ from botLog import BotLog
 import os, signal, functools, socket, json, sys, random
 from unidecode import unidecode
 from difflib import SequenceMatcher
+from openai import OpenAI
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -26,16 +27,6 @@ with open(API_KEY_PATH) as json_file:
     json_data = json.load(json_file)
     api_key = json_data['key']
 
-from langchain.chains import ConversationChain
-from langchain.memory import (
-    CombinedMemory,
-    ConversationBufferMemory,
-    ConversationBufferWindowMemory,
-
-)
-from langchain_core.prompts import PromptTemplate
-from langchain_openai.chat_models import ChatOpenAI
-
 def contains(str, substr):
     if substr:
         substr_len = len(substr)
@@ -51,7 +42,7 @@ class BotBrain:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         self.ip = s.getsockname()[0]
-        self.model = "ft:mistral-small-latest:a8c72c9e:20240627:1267b6a8"
+        self.model = "ft:gpt-4o-mini-2024-07-18:personal:quijote-10interactions:AwdjqR1Y:ckpt-step-1408"
         s.close()
 
         self.osc_server = Server(self.ip, 14001, self.oscIn)
@@ -64,15 +55,11 @@ class BotBrain:
 
         self.ai_prefix = "Don Quijote:"
         self.human_prefix = "Sancho:"
-        self.endPrompt = """
-        Conversación actual:
-        {chat_history_lines}
-        Sancho: {input}
-        Don Quijote:"""
 
         self.def_prompt = "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar en 2024, con resaca de mal humor y enfadado e intentas actualizarte haciendo preguntas sobre el mundo actual.  Intentas saber donde se encuentran las grandes aventuras de caballeros hoy, y buscas un nuevo escudero para acompanarte en tus futuras aventuras. Hablas con frases cortas, directas, con humor y a la primera persona. Haces preguntas a tu interlocutor para saber si podria ser un buen escudero para acompnarte en las proximas hazanas."
 
         self.adios = ["adios", "adíos", "hasta luego", "nos vemos pronto", "hasta pronto", "hasta mañana", "hasta la vista", "ciao", "voy a colgar", "cuelgo" ]
+        self.llm = OpenAI(api_key=api_key)
 
         self.filename = data
         self.loadData()
@@ -81,30 +68,25 @@ class BotBrain:
 
     def resetMemory(self):
         print("RESET MEMORY")
-        self.conv_memory = ConversationBufferWindowMemory(k=100,
-            memory_key="chat_history_lines", input_key="input",  ai_prefix=self.ai_prefix, human_prefix=self.human_prefix
-        )
-        self.memory = self.conv_memory
+        self.memory = []
 
     def setPrompt(self, prompt):
         self.conversation_prompt = prompt
-        print("SET NEW PROMPT", self.conversation_prompt)
-        self.PROMPT = PromptTemplate(
-            input_variables=["input", "chat_history_lines"],
-            template=self.conversation_prompt,
-        )
-        print("WITH MODEL:", self.model)
-        self.llm = ChatOpenAI(api_key=api_key, model=self.model)
-        self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
+        #print("SET NEW PROMPT", self.conversation_prompt)
+
+        if not self.memory:
+            self.memory.append({"role": "system", "content": prompt})
+        else:
+            if self.memory[0]['role'] == 'system':
+                self.memory[0]['content'] = prompt
+            else:
+                self.memory.insert(0, {"role": "system", "content": prompt})
+        print(self.memory)
 
     def addPrompt(self, prompt):
-        self.conversation_prompt = self.def_prompt+" "+prompt+" "+self.endPrompt
-        print("ADD NEW PROMPT", self.conversation_prompt)
-        self.PROMPT = PromptTemplate(
-            input_variables=["input", "chat_history_lines"],
-            template=self.conversation_prompt,
-        )
-        self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
+        self.setPrompt(self.def_prompt+" "+prompt)
+        print(self.def_prompt)
+        print(prompt)
 
     def loadData(self):
         print("[BotBrain] Loading data")
@@ -119,14 +101,13 @@ class BotBrain:
             self.goodbyes = data['sentences']["goodbyes"]
             self.human_prefix = data['settings']['username']
             self.ai_prefix = data['settings']['botname']
-            self.endPrompt = data['settings']['end_prompt']
             self.model = data['settings']['model']
 
         #print("\tSequence:", type(self.sequence), self.sequence)
         #print("\t0:", self.sequence[0])
         self.def_prompt = self.sequence[0]['prompt']
         self.resetMemory()
-        self.setPrompt(self.def_prompt+self.endPrompt)
+        self.setPrompt(self.def_prompt)
 
     # initalisation de conversation déclenchée par le controleur principal (quand on décroche le téléphone)
     def newConversation(self):
@@ -208,19 +189,19 @@ class BotBrain:
                 return None
 
         prev = self.lastresponse
-        try:
-            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
-            #CHECK REPETITION
-            sim = similar(self.lastresponse, prev)
-            while sim > SIMILAR:
-                print("_____ SIMILARITY :",sim)
-                self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
-                sim = similar(self.lastresponse, prev)
-        except:
-            print("¡¡¡Error!!!")
-            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
-        finally:
-            print("[BotBrain]",self.curPart,self.lastresponse)
+
+        self.memory.append({"role": "user", "content": phrase})
+        print(self.memory)
+        completion = self.llm.chat.completions.create(
+                model=self.model,
+                messages=self.memory,
+                temperature = 1,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
+        self.lastresponse = completion.choices[0].message.content
+        self.memory.append({"role": "assistant", "content": self.lastresponse})
         self.log.logBot(self.curPart, self.lastresponse)
         self.osc_client.send('/lastresponse', self.lastresponse)
 
