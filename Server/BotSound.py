@@ -35,6 +35,8 @@ class BotSound():
         self.phoneHang.set_volume(self.config['hang'])
         self.section1 = pygame.mixer.Sound(self.sound_path + "quijote.wav")
         self.section1.set_volume(self.config['ambiant'])
+        self.sectionFinal = pygame.mixer.Sound(self.sound_path + "quijote_final.wav")
+        self.sectionFinal.set_volume(self.config['final'])
 
         self.botthink = []
         for j in os.listdir(self.sound_path):
@@ -126,7 +128,7 @@ class BotSound():
 
         else: #END ANIMATION
             print("[Sound] Play End File")
-            #self.xfade(self.end, loop=0)
+            self.xfade(self.sectionFinal, loop=0)
 
     def xfade(self, newsound, loop=-1):
         if self.channel == CHANNEL_AMBIANT_A :

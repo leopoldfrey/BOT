@@ -129,7 +129,7 @@ class BotEditor():
             j = json.loads(k)
             idx = html.unescape(j['idx'])
             #print("modSentence",idx)
-            self.data['sentences'][idx] = j['sentence'].split(",")
+            self.data['sentences'][idx] = j['sentence'].split(";")
             
             self.save()
 

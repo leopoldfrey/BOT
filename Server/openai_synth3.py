@@ -8,6 +8,10 @@ from typing import Callable, Generator
 import openai
 import pyaudio
 
+import functools
+print = functools.partial(print, end='\n',flush=True)
+
+
 #dummy
 VOICE = []
 def get_voices():
@@ -18,7 +22,7 @@ def get_voices(lang):
 # Constants
 DELIMITERS = [f"{d} " for d in (".", "?", "!")]  # Determine where one phrase ends
 MINIMUM_PHRASE_LENGTH = 200  # Minimum length of phrases to minimize audio choppiness
-TTS_CHUNK_SIZE = 2048
+TTS_CHUNK_SIZE = 1024
 
 # Default values
 DEFAULT_TTS_MODEL = "tts-1"
