@@ -30,7 +30,7 @@ def get_voices(lang):
     return VOICE
 
 class TextToSpeech(Thread):
-    def __init__(self, text, stream, silent=False):
+    def __init__(self, text, silent=False):
         Thread.__init__(self)
         print("[Server] [TextToSpeech]",len(text), text)
         #if(len(text) > 200):
@@ -42,7 +42,6 @@ class TextToSpeech(Thread):
         self._running = True
         self.silent = silent
         self.pid = 0
-        self.player_stream = stream
 
     def stop(self):
         # print("TODO STOP VOICE", self.pid)
@@ -70,7 +69,7 @@ class TextToSpeech(Thread):
                     #print(f"Time to first byte: {int((time.time() - start_time) * 1000)}ms") 
                     for chunk in response.iter_bytes(chunk_size=1024): 
                         if chunk:
-                            self.player_stream.write(chunk)
+                            player_stream.write(chunk)
                     #print(f"Done in {int((time.time() - start_time) * 1000)}ms.") 
             if len(self.textA) > 0:
                 t = self.textA.pop(0)

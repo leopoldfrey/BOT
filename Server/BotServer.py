@@ -3,7 +3,7 @@ import bottle, os, time, json, webbrowser, sys
 from subprocess import Popen
 from sys import platform as _platform
 from bottle import static_file
-from openai_synth2 import TextToSpeech
+from openai_synth3 import TextToSpeech
 from threading import Thread
 from websocket_server import WebsocketServer
 from pyosc import Client, Server
