@@ -613,8 +613,8 @@ class BotServer:
         if self.currentTime > self.config["max_silence"]:
             if(not self.silent):
                 self.relance()
-        if(self.globalTime > self.maxtime and not self.flagWaitEnd):
-            self.osc_client.send("/end", "")
+        #if(self.globalTime > self.maxtime and not self.flagWaitEnd):
+        #    self.osc_client.send("/end", "")
         #else:
         #    self.globalTime = 0
         #    self.currentTime = 0
