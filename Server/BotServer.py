@@ -17,6 +17,8 @@ print = functools.partial(print, flush=True)
 DEBUG = False
 DEBUG2 = False
 
+NAP_TIME = 20
+
 #import google.cloud.texttospeech as tts
 
 MAXRING = 30
@@ -411,7 +413,14 @@ class BotServer:
             return
         print("[Server] PHONE OFF")
         if self.flagWaitEnd :
+            self.sound_client.send("/phone", "stop")
+            self.sound_client.send("/stop", 0)
+            self.tg.stop()
             self.phone = False
+            self.silent = True
+            self.userDetected = False
+            self.reset()
+            self.endNap()
         elif self.waitHangPhone :
             self.phone = False
             self.waitHangPhone = False
@@ -428,12 +437,14 @@ class BotServer:
             self.silent = True
             self.userDetected = False
             self.reset()
+            self.endNap()
         else:
             self.sound_client.send("/phone", "stop")
             self.sound_client.send("/stop", 0)
             self.tg.stop()
             self.phone = False
             self.silent = True
+            self.endNap()
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.wsServer.broadcast({"command":"phone","value":self.phone})
         self.wsServer.broadcast({"command":"on","value":self.on})
@@ -557,6 +568,12 @@ class BotServer:
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.lastInteractionTime = time.time()
         self.osc_client.send("/start", 1)
+
+    def endNap(self):
+        print("[Server] Nap Time", NAP_TIME)
+        time.sleep(NAP_TIME)
+        print("[Server] End Nap")
+        
 
     def reset(self):
         print("[Server] RESET")

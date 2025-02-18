@@ -24,7 +24,7 @@ $host.UI.RawUI.ForegroundColor = "Green"
 Write-Output "Starting Video"
 Start-Job -Name Video -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 4;
-  open ../motion/quijote_detect.maxpat
+  open ../motion/quijote_detect/quijote_detect.maxproj
 }
 
 While (Get-Job -State "Running")
