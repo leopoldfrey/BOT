@@ -413,40 +413,19 @@ class BotServer:
             return
         print("[Server] PHONE OFF")
         if self.flagWaitEnd :
-            self.sound_client.send("/phone", "stop")
-            self.sound_client.send("/stop", 0)
-            self.tg.stop()
             self.phone = False
-            self.silent = True
-            self.userDetected = False
-            self.reset()
-            #self.endNap()
-            
         elif self.waitHangPhone :
             self.phone = False
             self.waitHangPhone = False
-            # self.phoneCtrl.ring()
-            # TODO COUNT PHONE RING
-            self.ringTime = time.time()
-            self.sound_client.send("/phone", "ring")
-        elif self.on :
-            # self.phoneCtrl.stop()
-            self.sound_client.send("/phone", "stop")
-            self.sound_client.send("/stop", 0)
-            self.tg.stop()
-            self.phone = False
             self.silent = True
             self.userDetected = False
-            
             self.reset()
-            #self.endNap()
         else:
             self.sound_client.send("/phone", "stop")
             self.sound_client.send("/stop", 0)
             self.tg.stop()
             self.phone = False
             self.silent = True
-            #self.endNap()
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.wsServer.broadcast({"command":"phone","value":self.phone})
         self.wsServer.broadcast({"command":"on","value":self.on})
