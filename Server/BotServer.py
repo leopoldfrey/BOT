@@ -442,6 +442,7 @@ class BotServer:
             self.tg.stop()
             self.phone = False
             self.silent = True
+            self.reset()
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.wsServer.broadcast({"command":"phone","value":self.phone})
         self.wsServer.broadcast({"command":"on","value":self.on})
