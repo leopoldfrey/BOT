@@ -419,8 +419,9 @@ class BotServer:
             self.phone = False
             self.silent = True
             self.userDetected = False
-            self.endNap()
             self.reset()
+            #self.endNap()
+            
         elif self.waitHangPhone :
             self.phone = False
             self.waitHangPhone = False
@@ -436,15 +437,16 @@ class BotServer:
             self.phone = False
             self.silent = True
             self.userDetected = False
-            self.endNap()
+            
             self.reset()
+            #self.endNap()
         else:
             self.sound_client.send("/phone", "stop")
             self.sound_client.send("/stop", 0)
             self.tg.stop()
             self.phone = False
             self.silent = True
-            self.endNap()
+            #self.endNap()
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.wsServer.broadcast({"command":"phone","value":self.phone})
         self.wsServer.broadcast({"command":"on","value":self.on})
