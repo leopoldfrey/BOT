@@ -419,8 +419,8 @@ class BotServer:
             self.phone = False
             self.silent = True
             self.userDetected = False
-            self.reset()
             self.endNap()
+            self.reset()
         elif self.waitHangPhone :
             self.phone = False
             self.waitHangPhone = False
@@ -436,8 +436,8 @@ class BotServer:
             self.phone = False
             self.silent = True
             self.userDetected = False
-            self.reset()
             self.endNap()
+            self.reset()
         else:
             self.sound_client.send("/phone", "stop")
             self.sound_client.send("/stop", 0)
