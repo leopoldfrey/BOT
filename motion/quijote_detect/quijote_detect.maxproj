@@ -2,10 +2,10 @@
 	"name" : "quijote_detect",
 	"version" : 1,
 	"creationdate" : 3821554297,
-	"modificationdate" : 3821554333,
+	"modificationdate" : 3822802063,
 	"viewrect" : [ 140.0, 316.0, 300.0, 500.0 ],
 	"autoorganize" : 1,
-	"hideprojectwindow" : 0,
+	"hideprojectwindow" : 1,
 	"showdependencies" : 1,
 	"autolocalize" : 0,
 	"contents" : 	{
@@ -18,15 +18,7 @@
 
 		}
 ,
-		"data" : 		{
-
-		}
-,
 		"externals" : 		{
-
-		}
-,
-		"other" : 		{
 
 		}
 

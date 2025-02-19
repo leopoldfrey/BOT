@@ -68,7 +68,7 @@
         }
     },
     "sound": {
-        "ring": 0.1,
+        "ring": 1,
         "hang": 0.6,
         "botthink": 0.7,
         "ambiant": 0.25,
