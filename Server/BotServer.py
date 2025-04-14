@@ -261,6 +261,7 @@ class BotServer:
         self.http_server.get('/viewer', callback=self.viewer)
         self.http_server.get('/viewer.html', callback=self.viewer)
         self.http_server.get('/style.css', callback=self.css)
+        self.http_server.get('/jquery-3.6.0.min.js', callback=self.js)
         self.http_server.post('/reco', callback=self.reco)
         self.http_server.get('/poll', callback=self.poll)
         # print()
@@ -275,12 +276,13 @@ class BotServer:
         print("")
         print("[Server] ___STARTING GOOGLE CHROME___")
         url = 'http://localhost:8080/'
+        url2 = 'http://localhost:8080/viewer.html'
         # MacOS
         if _platform == "darwin":
-            chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
+            chrome_path = 'open -a /Applications/Google\ Chrome.app %s --args --kiosk --disable-infobars'
             webbrowser.get(chrome_path).open(url)
         elif _platform == "win32" or _platform == "win64":
-            Popen(['C:\Program Files\Google\Chrome\Application\chrome.exe','http://localhost:8080'])
+            Popen(['C:\Program Files\Google\Chrome\Application\chrome.exe','--kiosk', '--disable-infobars', 'http://localhost:8080'])
         # Linux
         # chrome_path = '/usr/bin/google-chrome %s'
 
@@ -633,6 +635,9 @@ class BotServer:
 
     def css(self):
         return static_file("public/style.css", root="")
+
+    def js(self):
+        return static_file("public/jquery-3.6.0.min.js", root="")
 
     def getConfig(self):
         print(">> getConfig")

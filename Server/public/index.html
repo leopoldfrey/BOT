@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="stylesheet" href="style.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="jquery-3.6.0.min.js"></script>
   <title>Bot</title>
 </head>
 
 <body>
-  <div id='topbar'>
+  <div id='topbar' style="display: none;">
     <h1 id="botname"></h1>/<h1 id="username"></h1>
     <label class="switch">
       <input type="checkbox" name="facedetect" id="facedetect">
@@ -33,7 +33,7 @@
   </div>
   <div id='speech'>
   </div>
-  <div id='info'>
+  <div id='info' style="display: none;">
     <div id="status" onclick='pause()'>Off</div>
     <div id="timer" onclick='reset()'>0:00</div>
     <div id="info2">
@@ -43,6 +43,18 @@
 
   </div>
   <script>
+
+    document.addEventListener('keydown', function(event) {
+      // Vérifie si la touche "P" est pressée (majuscule ou minuscule)
+      if (event.key === 'p' || event.key === 'P') {
+        const phoneCheckbox = document.getElementById('phone');
+        // Inverse l'état de la case à cocher
+        phoneCheckbox.checked = !phoneCheckbox.checked;
+        // Déclenche l'événement "change" pour synchroniser avec WebSocket
+        phoneCheckbox.dispatchEvent(new Event('change'));
+      }
+    });
+
     var DEBUG = false;
     const statusText = document.getElementById('status');
     var recognition;
