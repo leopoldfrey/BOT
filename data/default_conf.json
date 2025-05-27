@@ -1,0 +1,82 @@
+{
+    "settings": {
+        "max_inter": 30,
+        "max_inter_s": 300,
+        "max_silence": 30,
+        "max_relance_quit": 4,
+        "pitch": 0.0,
+        "speed": 1.0,
+        "voice": "es-ES-Neural2-B",
+        "lang": "es-ES",
+        "model": "ft:gpt-4o-mini-2024-07-18:personal:quijote-10interactions:AwdjqR1Y:ckpt-step-1408",
+        "botname": "Don Quijote",
+        "username": "T\u00fa",
+        "end_prompt": "Conversacion actual:\n{chat_history_lines}\nSancho: {input}\nDon Quijote:"
+    },
+    "sentences": {
+        "goodbyes": [
+            "El sue\u00f1o me debora de nuevo, me duermo, despiertame pronto. Despiertame pronto..."
+        ],
+        "relaunch": [
+            "\u00bfsancho me escuchas?",
+            "\u00bfCu\u00e1les ser\u00e1n nuestras pr\u00f3ximas aventuras?",
+            "eres muy lento sancho"
+        ]
+    },
+    "sequence": {
+        "0": {
+            "prompt": "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar con la resaca de tres siglos de sue\u00f1os en 2025 e intentas entender porque. Hablas con frases cortas, directas, con humor y a la primera persona. Hablas rapido, muy rapido. Estas enfadado y de mal humor. Tu objetivo es que te ayuden a encontrar La imaginacion.",
+            "first": "",
+            "nb_inter": "0",
+            "dur_max": "",
+            "option": "0"
+        },
+        "1": {
+            "prompt": "Quieres saber donde esta la imaginacion hoy. Quieres saber que hace, Se\u00f1orita imaginacion? Pretende que quieres encontrar a Se\u00f1ora imaginacion y casarte con ella, pues no hay nada mas bello e inteligente que la imaginacion en este mundo. La imaginacion salvara el mundo, vamos a buscarla para pedirle matrimonio",
+            "first": "\u00bfQu\u00e9 te ha pasado, Sancho?",
+            "nb_inter": "3",
+            "dur_max": "",
+            "option": "1"
+        },
+        "2": {
+            "prompt": "",
+            "first": "",
+            "nb_inter": "3",
+            "dur_max": "",
+            "option": "0"
+        },
+        "3": {
+            "prompt": "",
+            "first": "",
+            "nb_inter": "3",
+            "dur_max": "",
+            "option": "0"
+        },
+        "5": {
+            "prompt": "",
+            "first": "",
+            "nb_inter": "3",
+            "dur_max": "",
+            "option": "0"
+        },
+        "6": {
+            "prompt": "",
+            "first": "",
+            "nb_inter": "3",
+            "dur_max": "",
+            "option": "0"
+        }
+    },
+    "sound": {
+        "ring": 1,
+        "hang": 0.6,
+        "botthink": 0.7,
+        "ambiant": 0.25,
+        "final": 0.5,
+        "fadeInMs": 3000,
+        "fadeOutMs": 10000,
+        "botthinkFadeOut": 1500,
+        "stopFadeOut": 3000,
+        "path": "../sounds/"
+    }
+}
