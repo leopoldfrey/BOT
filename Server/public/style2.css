@@ -122,6 +122,20 @@ p
   /*text-transform: uppercase;*/
 }
 
+#topbar2 {
+  position: sticky;
+  top: 0px;
+  background-color: black;
+  width: 100%;
+  padding: 20px 30px 17px 30px;
+  margin: 0px;
+  font-size: 1rem;
+  /*height: 100px;*/
+  color: white;
+  font-weight: bold;
+  /*text-transform: uppercase;*/
+}
+
 .ready {
   color: lightgreen;
   font-weight: bold;

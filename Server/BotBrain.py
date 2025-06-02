@@ -61,10 +61,13 @@ class BotBrain:
         self.log = BotLog()
         self.curStep = 0
         self.curPart = 0
-
+        self.lastresponse = ""
+        
         self.ai_prefix = "Don Quijote:"
         self.human_prefix = "Sancho:"
         self.endPrompt = """
+
+        
         Conversación actual:
         {chat_history_lines}
         Sancho: {input}
@@ -141,6 +144,7 @@ class BotBrain:
 
     # première phrase du bot, c'est lui qui lance la conversation
     def speakStart(self):
+        print("SPEAK START")
         self.lastresponse = self.sequence[self.curPart]['first']
         if(self.lastresponse == ""):
             self.getResponse("")
@@ -167,6 +171,7 @@ class BotBrain:
 
     # c'est ici qu'il faut insérer le BOT, string "phrase" en entrée
     def getResponse(self, phrase):
+        print("GET RESPONSE", phrase)
         phrase = self.preProcess(phrase)
 
         if self.checkAdios(phrase):

@@ -107,10 +107,8 @@ class BotWebSocket(Thread):
         elif msg["command"] == "pause" :
             self.parent.pause()
         elif msg["command"] == "reset" :
-            self.userDetected = False
             self.parent.reset()
         elif msg["command"] == "stop" :
-            self.userDetected = False
             self.parent.reset()
         elif msg["command"] == "getConfig" :
             self.parent.getConfig()
@@ -144,9 +142,10 @@ class BotWebSocket(Thread):
         elif msg["command"] == "reload" :
             self.parent.reload()
         elif msg["command"] == "answer" :
-            if self.parent.silent == False:
-                print("[Server] ANSWER")
-                self.parent.answer()
+            self.parent.answer()
+        elif msg["command"] == "listen" :
+           print("[Server] LISTEN", msg["value"])
+           self.parent.listen(msg["value"])
 
     def run(self):
         self.server.run_forever()
@@ -254,8 +253,8 @@ class BotServer:
         url2 = 'http://localhost:8080/viewer.html'
         # MacOS
         if _platform == "darwin":
-            #chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
-            chrome_path = 'open -a /Applications/Google\ Chrome.app %s --args --kiosk --disable-infobars'
+            chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
+            #chrome_path = 'open -a /Applications/Google\ Chrome.app %s --args --kiosk --disable-infobars'
             webbrowser.get(chrome_path).open(url)
         elif _platform == "win32" or _platform == "win64":
             Popen(['C:\Program Files\Google\Chrome\Application\chrome.exe','--kiosk', '--disable-infobars', 'http://localhost:8080'])
@@ -307,10 +306,11 @@ class BotServer:
         mess = result['transcript']
         self.lastInteractionTime = time.time()
         if result['sentence'] == 1:
-            self.lastMessage = self.lastMessage + " " + mess
-            # print("user:", mess)
+            if self.silent == False:
+                self.lastMessage = self.lastMessage + " " + mess
+                self.wsServer.broadcast({'command':'_user','value':self.lastMessage})
+            # print("user:", mess) 
             # self.lastInteractionTime = time.time()
-            self.wsServer.broadcast({'command':'_user','value':self.lastMessage})
             # print("INTER", self.interactions)
             #if(DEBUG):
             #    mess = translateES(mess)
@@ -323,6 +323,7 @@ class BotServer:
     def answer(self):
         self.silent = True
         self.wsServer.broadcast({'command':'silent','value':self.silent})
+        print("[Server] ANSWER", self.lastMessage)
         self.osc_client.send('/getresponse', self.lastMessage)
         self.lastMessage = ""
 
@@ -510,6 +511,22 @@ class BotServer:
     def pause(self):
         self.silent = not self.silent
         self.wsServer.broadcast({'command':'silent','value':self.silent})
+
+    def listen(self, value):
+        if value == True:
+            if self.on == False:
+                self.on = True
+                self.silent = True
+                self.wsServer.broadcast({'command':'silent','value':self.silent})
+                self.lastInteractionTime = time.time()
+            time.sleep(1)
+            #print("[Server] LISTENING")
+            self.silent = False
+            self.wsServer.broadcast({'command':'silent','value':self.silent})
+        else:
+            #print("[Server] NOT LISTENING")
+            self.silent = True
+            self.wsServer.broadcast({'command':'silent','value':self.silent})
 
     def kill(self):
         print("[Server] Stop Brain Osc Server")

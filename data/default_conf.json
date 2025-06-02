@@ -33,8 +33,8 @@
         },
         "1": {
             "prompt": "Quieres saber donde esta la imaginacion hoy. Quieres saber que hace, Se\u00f1orita imaginacion? Pretende que quieres encontrar a Se\u00f1ora imaginacion y casarte con ella, pues no hay nada mas bello e inteligente que la imaginacion en este mundo. La imaginacion salvara el mundo, vamos a buscarla para pedirle matrimonio",
-            "first": "\u00bfQu\u00e9 te ha pasado, Sancho?",
-            "nb_inter": "3",
+            "first": "",
+            "nb_inter": "1000",
             "dur_max": "",
             "option": "1"
         },

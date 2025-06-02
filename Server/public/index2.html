@@ -11,6 +11,13 @@
 </head>
 
 <body>
+  <div id='topbar2'>
+Listen :<label class="switch topbutton">
+      <input type="checkbox" name="listen" id="listen">
+      <span class="slider round"></span>
+  </label>
+  <button class="topbutton" id="answer">Answer</button>
+  </div>
   <div id='topbar' style="display: none;">
     <h1 id="botname"></h1>/<h1 id="username"></h1>
     <label class="switch">
@@ -44,14 +51,13 @@
         phoneCheckbox.checked = !phoneCheckbox.checked;
         // Déclenche l'événement "change" pour synchroniser avec WebSocket
         phoneCheckbox.dispatchEvent(new Event('change'));
-      } else if(event.keyCode == 32) {
-        socket.send(JSON.stringify({
-        'command': 'answer'
-        }));
-      } else if(event.keyCode == 27) {
-        const onCheckbox = document.getElementById('on');
-        onCheckbox.checked = !onCheckbox.checked;
-        onCheckbox.dispatchEvent(new Event('change'));
+      } else if(event.key === 'z' || event.keyCode == 32) {
+        const answerBut = document.getElementById('answer');
+        answerBut.dispatchEvent(new Event('click'));
+      } else if(event.key === 'a' || event.keyCode == 32) {
+        const listenBut = document.getElementById('listen');
+        listenBut.checked = !listenBut.checked;
+        listenBut.dispatchEvent(new Event('change'));
       }
     });
 
@@ -74,7 +80,7 @@
             } else {
               updateStatus("Pause", "orange");
             }
-            recognition.continuous = true;
+            recognition.continuous = false;
             recognition.interimResults = true;
             recognition.maxAlternatives = 1;
             if(DEBUG)
@@ -221,7 +227,7 @@
         }
         //console.log("WEBSOCKET SILENT", $silent)
         if ($silent == true) {
-          // recognition.stop();
+          //recognition.stop();
         } else {
           p = $('<p class="speech_you"></p>');
           $sp.append(p);
@@ -323,9 +329,9 @@
           if (event.results[i].isFinal) {
             recognition.stop();
             console.log("USER", event.results[i][0].transcript);
-            p = $('<p class="speech_you" data-content="'+username+' : " style="color: '+color+'"></p>');
+            //p = $('<p class="speech_you" data-content="'+username+' : " style="color: '+color+'"></p>');
             // $(p).text("...");
-            $sp.append(p);
+            //$sp.append(p);
           }
           $.ajax({
             type: "POST",
@@ -365,6 +371,26 @@
       }));
     });
 
+    $("#answer").click(function() {
+      $("#listen").prop('checked', false);
+      socket.send(JSON.stringify({
+        'command': 'listen',
+        'value': 0
+      }));
+      setTimeout(() => {
+        socket.send(JSON.stringify({
+          'command': 'answer'
+        }));
+      }, 200);  
+    });
+
+    $("#listen").change(function() {
+      socket.send(JSON.stringify({
+        'command': 'listen',
+        'value': $("#listen").prop('checked') ? 1 : 0
+      }));
+    });
+
     $("#end").click(function() {
       socket.send(JSON.stringify({
         'command': 'end'
@@ -392,8 +418,8 @@
         $(p).get(0).scrollIntoView();
         recognition.stop();
         console.log("USER", answer);
-        p = $('<p class="speech_bot" data-content="'+botname+' : " style="color : '+color+'"></p>');
-        $sp.append(p);
+        // p = $('<p class="speech_bot" data-content="'+botname+' : " style="color : '+color+'"></p>');
+        // $sp.append(p);
         $.ajax({
           type: "POST",
           url: '/reco',
