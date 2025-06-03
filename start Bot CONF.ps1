@@ -1,9 +1,11 @@
 #!/usr/bin/env pwsh
 [Console]::TreatControlCAsInput = $True
 
+
 $host.UI.RawUI.ForegroundColor = "cyan"
 Write-Output "Starting Server"
 Start-Job -Name Server  -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
+  ../botenv/bin/activate.ps1
   python ./BotServer2.py
 }
 
@@ -11,6 +13,7 @@ $host.UI.RawUI.ForegroundColor = "Yellow"
 Write-Output "Starting Brain"
 Start-Job -Name Brain -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 1;
+  ../botenv/bin/activate.ps1
   python ./BotBrain.py ../data/default_conf.json
 }
 
