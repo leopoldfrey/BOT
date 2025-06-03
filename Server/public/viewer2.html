@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="style2.css">
+  <script src="jquery-3.6.0.min.js"></script>
+  <title>Bot Viewer</title>
+</head>
+
+<body>
+
+  <div id='speech'>
+  </div>
+  <script>
+    
+    var username = "You";
+    var botname = "Bot";
+    var color = "#FFFFFF";
+    var $silent = false;
+    var $sp = $('#speech');
+    var p;
+
+    $(".speech_you").attr('data-content', username+" : ");
+    $(".speech_bot").attr('data-content', botname+ " : ");
+
+    $timer = $("#timer");
+
+    // INIT WEBSOCKET
+    let socket = new WebSocket("ws://localhost:9001");
+
+    socket.onopen = function(e) {
+      console.log("[open] Connection established");
+      socket.send(JSON.stringify({
+        'command': 'connect'
+      }));
+    };
+
+    socket.onmessage = function(event) {
+      // console.log(`[message] Data received from server: ${event.data}`);
+      data = JSON.parse(event.data);
+      if (data.command == "botname") {
+        botname = data.value;
+        last_bot =  $("#speech").children(".speech_bot").last();
+        last_bot.attr('data-content', botname+ " : ");
+        $("#botname").html(botname);
+        console.log("BOTNAME", botname);
+      } else if (data.command == "username") {
+        username = data.value;
+        last_bot =  $("#speech").children(".speech_you").last();
+        last_bot.attr('data-content', username+ " : ");
+        $("#username").html(username);
+        console.log("USERNAME", username);
+      } else if(data.command == "_user") {
+        console.log("USER", data.value);
+        p = $('<p class="speech_you"></p>');
+        $(p).text(data.value);
+        $sp.append(p);
+        $(".speech_you").attr('data-content', username+" : ")
+        $(p).get(0).scrollIntoView();
+      } else if (data.command == "_bot") {
+        console.log("BOT", data.value);
+        if (!p || p.text() != "") {
+          p = $('<p class="speech_you"></p>');
+          $sp.append(p);
+        }
+        $(p).removeClass("speech_you");
+        $(p).attr('data-content', botname+" : ")
+        $(p).addClass("speech_bot");
+        $(p).css('color', color);
+        $(p).text(data.value);
+        $(p).get(0).scrollIntoView();
+      } else if (data.command == "clear") {
+        $sp.empty();
+      } else if (data.command == "params") {
+        username = data.username;
+        last_bot =  $("#speech").children(".speech_you").last();
+        last_bot.attr('data-content', username+ " : ");
+        $("#username").html(username);
+        botname = data.botname;
+        color = data.color;
+        last_bot =  $("#speech").children(".speech_bot").last();
+        last_bot.attr('data-content', botname+ " : ");
+        $("#botname").html(botname);
+        
+      } else {
+        console.log("[ws]", data);
+      }
+    };
+
+    socket.onclose = function(event) {
+      console.log('[close] Connection closed');
+    };
+
+    socket.onerror = function(error) {
+      console.log(`[error] ${error.message}`);
+    };
+  </script>
+</body>
+
+</html>

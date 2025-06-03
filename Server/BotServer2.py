@@ -250,12 +250,13 @@ class BotServer:
         print("")
         print("[Server] ___STARTING GOOGLE CHROME___")
         url = 'http://localhost:8080/'
-        url2 = 'http://localhost:8080/viewer.html'
+        url2 = 'http://localhost:8080/viewer'
         # MacOS
         if _platform == "darwin":
             chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
-            #chrome_path = 'open -a /Applications/Google\ Chrome.app %s --args --kiosk --disable-infobars'
+            chrome_path2 = 'open -a /Applications/Google\ Chrome.app %s --args --kiosk --disable-infobars'
             webbrowser.get(chrome_path).open(url)
+            webbrowser.get(chrome_path2).open(url2)
         elif _platform == "win32" or _platform == "win64":
             Popen(['C:\Program Files\Google\Chrome\Application\chrome.exe','--kiosk', '--disable-infobars', 'http://localhost:8080'])
         # Linux
@@ -308,7 +309,7 @@ class BotServer:
         if result['sentence'] == 1:
             if self.silent == False:
                 self.lastMessage = self.lastMessage + " " + mess
-                self.wsServer.broadcast({'command':'_user','value':self.lastMessage})
+                self.wsServer.broadcast({'command':'_user','value':mess})
             # print("user:", mess) 
             # self.lastInteractionTime = time.time()
             # print("INTER", self.interactions)
@@ -398,7 +399,7 @@ class BotServer:
         return open("public/index2.html", "rt").read()
 
     def viewer(self):
-        return open("public/viewer.html", "rt").read()
+        return open("public/viewer2.html", "rt").read()
 
     def css(self):
         return static_file("public/style.css", root="")

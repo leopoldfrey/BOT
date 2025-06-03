@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="stylesheet" href="style2.css">
   <script src="jquery-3.6.0.min.js"></script>
-  <title>Bot</title>
+  <title>Bot Admin</title>
 </head>
 
 <body>
@@ -229,8 +229,10 @@ Listen :<label class="switch topbutton">
         if ($silent == true) {
           //recognition.stop();
         } else {
-          p = $('<p class="speech_you"></p>');
-          $sp.append(p);
+          if (!p || p.text() != "") {
+            p = $('<p class="speech_you"></p>');
+            $sp.append(p);
+          }
           $(".speech_you").attr('data-content', username+" : ");
           try {
             recognition.start();
@@ -238,6 +240,12 @@ Listen :<label class="switch topbutton">
         }
       } else if (data.command == "_user") {
         // FOR DISPLAY VERSION
+        console.log("USER", data.value);
+        //p = $('<p class="speech_you"></p>');
+        $(p).text(data.value);
+        $sp.append(p);
+        $(".speech_you").attr('data-content', username+" : ")
+        $(p).get(0).scrollIntoView();
       } else if (data.command == "_bot") {
         // FOR DISPLAY VERSION
       } else if (data.command == "params") {
