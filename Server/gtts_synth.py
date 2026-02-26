@@ -18,7 +18,7 @@ API_KEY_PATH = "../secret/gtts_api_key.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = API_KEY_PATH
 
 # Make a Pedalboard object, containing multiple plugins:
-board = Pedalboard([Gain(4),PitchShift(semitones=0)]) #Chorus(),Reverb(room_size=0.02,damping=0.1,wet_level=0.7,dry_level=1.,width=0.9,freeze_mode=0)
+board = Pedalboard([Gain(4),PitchShift(semitones=-3)]) #Chorus(),Reverb(room_size=0.02,damping=0.1,wet_level=0.7,dry_level=1.,width=0.9,freeze_mode=0)
 
 def get_voices():
     client = tts.TextToSpeechClient()
@@ -190,15 +190,21 @@ if __name__ == '__main__':
         # tts = TextToSpeechNoThread()
         # tts.synthesize(sys.argv[1])
     else:
-        #v = get_voices("es-ES")
-        v = ['es-ES-Neural2-B']
-        text = "cuelgue por favor"
+        v = get_voices("fr-FR")
+        #v = ['es-ES-Neural2-B']
+        text = "Le sommeil m'envahit à nouveau, je m'endors, réveillez-moi vite."
         sp = 1
         pi = 0
         for i in range(len(v)):
             #print(v[i])
-            thd = TextToSpeech(text = text, pitch = pi, speed = sp, voice=v[i], lang='es-ES')
+            thd = TextToSpeech(text = text, pitch = pi, speed = sp, voice=v[i], lang='fr-FR')
             thd.start()
             sleep(5)
         #print('usage: %s <text-to-synthesize>')
 
+#fr-FR-Chirp3-HD-Sadachbia
+#fr-FR-Chirp3-HD-Charon
+#fr-FR-Neural2-G
+#fr-FR-Standard-G
+#fr-FR-Studio-D
+#fr-FR-Wavenet-G

@@ -211,7 +211,7 @@ class BotServer:
         print("[Server] ___INIT TextToSpeech___")
         #self.player_stream = pyaudio.PyAudio().open(format=8, channels=1, rate=24000, output=True)
         #TextToSpeech("Hola",  self.player_stream, silent=True).start()
-        TextToSpeech("Hola", silent=True).start()
+        TextToSpeech("Hola", silent=True, lang=self.lang, voice=self.voice).start()
         
         # print("[Server] ___INIT_RING___")
         # self.phoneCtrl = PhoneCtrl()
@@ -279,7 +279,7 @@ class BotServer:
         url2 = 'http://localhost:8080/viewer.html'
         # MacOS
         if _platform == "darwin":
-            chrome_path = 'open -a /Applications/Google\ Chrome.app %s --args --kiosk --disable-infobars'
+            chrome_path = 'open -a /Applications/Google\ Chrome.app %s'# --args --kiosk --disable-infobars'
             webbrowser.get(chrome_path).open(url)
         elif _platform == "win32" or _platform == "win64":
             Popen(['C:\Program Files\Google\Chrome\Application\chrome.exe','--kiosk', '--disable-infobars', 'http://localhost:8080'])
@@ -486,7 +486,7 @@ class BotServer:
         if self.voiceOn:
             # print("SPEAK", txt, "pitch", self.pitch, "speed", self.speed)
             #tts = TextToSpeech(txt, self.player_stream)
-            tts = TextToSpeech(txt)
+            tts = TextToSpeech(txt, lang=self.lang, voice=self.voice)
             tts.start()
             self.tg.addThread(tts)
         else:

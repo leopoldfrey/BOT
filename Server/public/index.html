@@ -53,6 +53,18 @@
         // Déclenche l'événement "change" pour synchroniser avec WebSocket
         phoneCheckbox.dispatchEvent(new Event('change'));
       }
+      if (event.key === 'h' || event.key === 'H') {
+        const infoDiv = document.getElementById('info');
+        const topbarDiv = document.getElementById('topbar');
+        // Inverse l'affichage des divs
+        if (infoDiv.style.display === 'none') {
+          infoDiv.style.display = '';
+          topbarDiv.style.display = '';
+        } else {
+          infoDiv.style.display = 'none';
+          topbarDiv.style.display = 'none';
+        }
+      }
     });
 
     var DEBUG = false;

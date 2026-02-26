@@ -20,6 +20,8 @@ class BotSound():
         with open(data, 'r') as f:
             data = json.load(f)
             self.config = data["sound"]
+            self.lang = data["settings"]['lang']
+        print("[Sound] Lang:", self.lang)
         print("[Sound] Configuration :", self.config)
         self.sound_path = self.config['path']
         print("SOUND PATH", self.sound_path)
@@ -31,7 +33,10 @@ class BotSound():
         print("[Sound] Load Sounds")
         self.phoneRing = pygame.mixer.Sound(self.sound_path + "phoneRing.wav")
         self.phoneRing.set_volume(self.config['ring'])
-        self.phoneHang = pygame.mixer.Sound(self.sound_path + "phoneHangES.wav")
+        if "fr-FR" in self.lang:
+            self.phoneHang = pygame.mixer.Sound(self.sound_path + "phoneHang.wav")
+        else:
+            self.phoneHang = pygame.mixer.Sound(self.sound_path + "phoneHangES.wav")    
         self.phoneHang.set_volume(self.config['hang'])
         self.section1 = pygame.mixer.Sound(self.sound_path + "quijote.wav")
         self.section1.set_volume(self.config['ambiant'])

@@ -12,21 +12,21 @@ $host.UI.RawUI.ForegroundColor = "Magenta"
 Write-Output "Starting Sound"
 Start-Job -Name Sound -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 10;
-  python ./BotSound.py
+  python ./BotSound.py ../data/default_FR.json
 }
 
 $host.UI.RawUI.ForegroundColor = "cyan"
 Write-Output "Starting Server"
 Start-Job -Name Server  -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 12;
-  python ./BotServer.py
+  python ./BotServer.py ../data/default_FR.json
 }
 
 $host.UI.RawUI.ForegroundColor = "Yellow"
 Write-Output "Starting Brain"
 Start-Job -Name Brain -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 15;
-  python ./BotBrain.py
+  python ./BotBrain.py ../data/default_FR.json
 }
 
 While (Get-Job -State "Running")
