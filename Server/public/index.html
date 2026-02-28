@@ -181,7 +181,7 @@
           else
             recognition.lang = lang;
         } catch (e) {
-          console.error(`No recognition for now: ${e}`);
+          console.warn(`no recognition for now: ${e}`);
         }
         
         //console.log($("#lang"));
@@ -267,7 +267,7 @@
           else
             recognition.lang = lang;
         } catch (e) {
-          console.error(`no recognition for now : ${e}`);
+          console.warn(`no recognition for now : ${e}`);
         }
         
         $("#lang").html(lang);

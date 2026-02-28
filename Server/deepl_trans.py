@@ -11,6 +11,9 @@ def translateES(txt):
 def translateFR(txt):
     return GoogleTranslator(source='es', target='fr').translate(text=txt)
 
+def translateFR2(txt):
+    return GoogleTranslator(target='fr').translate(text=txt)
+
 def translate(txt, src, dst):
     return GoogleTranslator(source=src, target=dst).translate(text=txt)
 

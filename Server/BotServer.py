@@ -279,7 +279,7 @@ class BotServer:
         url2 = 'http://localhost:8080/viewer.html'
         # MacOS
         if _platform == "darwin":
-            chrome_path = 'open -a /Applications/Google\ Chrome.app %s'# --args --kiosk --disable-infobars'
+            chrome_path = 'open -a /Applications/Google\ Chrome.app %s --args --kiosk --disable-infobars'
             webbrowser.get(chrome_path).open(url)
         elif _platform == "win32" or _platform == "win64":
             Popen(['C:\Program Files\Google\Chrome\Application\chrome.exe','--kiosk', '--disable-infobars', 'http://localhost:8080'])
