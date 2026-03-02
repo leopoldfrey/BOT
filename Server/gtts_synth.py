@@ -17,12 +17,13 @@ VOICE = []
 API_KEY_PATH = "../secret/gtts_api_key.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = API_KEY_PATH
 
+_tts_client = tts.TextToSpeechClient()
+
 # Make a Pedalboard object, containing multiple plugins:
 board = Pedalboard([Gain(4),PitchShift(semitones=-3)]) #Chorus(),Reverb(room_size=0.02,damping=0.1,wet_level=0.7,dry_level=1.,width=0.9,freeze_mode=0)
 
 def get_voices():
-    client = tts.TextToSpeechClient()
-    voices = client.list_voices()
+    voices = _tts_client.list_voices()
 
     for voice in voices.voices:
         if "fr-FR" in voice.language_codes:
@@ -39,8 +40,7 @@ def get_voices():
     return VOICE
 
 def get_voices(lang):
-    client = tts.TextToSpeechClient()
-    voices = client.list_voices()
+    voices = _tts_client.list_voices()
     for voice in voices.voices:
         if lang in voice.language_codes:
             VOICE.append(voice.name)
@@ -63,7 +63,7 @@ class TextToSpeech(Thread):
             language_code=self.language_code, name=self.voice
         )
         self.audio_config = tts.AudioConfig(audio_encoding=tts.AudioEncoding.LINEAR16, speaking_rate=speed, pitch=pitch)
-        self.client = tts.TextToSpeechClient()
+        self.client = _tts_client
         self._running = True
         self.silent = silent
         self.pid = 0
@@ -130,7 +130,7 @@ class TextToSpeech(Thread):
 class TextToSpeechNoThread():
     def __init__(self):
         #self.audio_config = tts.AudioConfig(audio_encoding=tts.AudioEncoding.LINEAR16)
-        self.client = tts.TextToSpeechClient()
+        self.client = _tts_client
 
     def synthesize(self, text, pitch=0.0, speed=1.08, voice="en-GB-Neural2-A", fname="output", play=True ,lang = "en-GB"):
         start = time.perf_counter()

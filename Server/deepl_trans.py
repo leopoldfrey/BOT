@@ -5,14 +5,18 @@ from deep_translator import GoogleTranslator
 import functools
 print = functools.partial(print, end='\n',flush=True)
 
+_translator_es = GoogleTranslator(source='fr', target='es')
+_translator_fr = GoogleTranslator(source='es', target='fr')
+_translator_fr2 = GoogleTranslator(target='fr')
+
 def translateES(txt):
-    return GoogleTranslator(source='fr', target='es').translate(text=txt)
+    return _translator_es.translate(text=txt)
 
 def translateFR(txt):
-    return GoogleTranslator(source='es', target='fr').translate(text=txt)
+    return _translator_fr.translate(text=txt)
 
 def translateFR2(txt):
-    return GoogleTranslator(target='fr').translate(text=txt)
+    return _translator_fr2.translate(text=txt)
 
 def translate(txt, src, dst):
     return GoogleTranslator(source=src, target=dst).translate(text=txt)

@@ -40,6 +40,7 @@ class ThreadGroup(Thread):
 
     def run(self):
         while True:
+            time.sleep(0.05)
             for t in self.thread_group[:]:
                 if not t.is_alive(): #isAlive
                     self.parent.lastInteractionTime = time.time()
