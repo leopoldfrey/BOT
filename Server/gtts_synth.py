@@ -191,15 +191,31 @@ if __name__ == '__main__':
         # tts.synthesize(sys.argv[1])
     else:
         v = get_voices("fr-FR")
-        #v = ['es-ES-Neural2-B']
-        text = "Le sommeil m'envahit à nouveau, je m'endors, réveillez-moi vite."
+        text = "Le sommeil m\'envahit à nouveau, je m'endors, réveillez-moi vite."
         sp = 1
         pi = 0
-        for i in range(len(v)):
-            #print(v[i])
-            thd = TextToSpeech(text = text, pitch = pi, speed = sp, voice=v[i], lang='fr-FR')
-            thd.start()
-            sleep(5)
+        # prepare exports directory inside Server
+        base_dir = os.path.dirname(__file__)
+        export_dir = os.path.join(base_dir, 'exports')
+        os.makedirs(export_dir, exist_ok=True)
+        tts_nt = TextToSpeechNoThread()
+        for i, voice in enumerate(v):
+            # sanitize voice name for filenames
+            safe_voice = re.sub(r'[^A-Za-z0-9._-]', '_', voice)
+            tmp_base = os.path.join(export_dir, f"tmp_{safe_voice}_{i}")
+            start = time.perf_counter()
+            # synthesize to temporary file without playing (written in export_dir)
+            tts_nt.synthesize(text, pitch=pi, speed=sp, voice=voice, fname=tmp_base, play=False, lang='fr-FR')
+            end = time.perf_counter()
+            duration = end - start
+            duration_str = f"{duration:.2f}s"
+            # put duration first in filename
+            new_name = os.path.join(export_dir, f"{duration_str}_{safe_voice}.wav")
+            try:
+                os.replace(tmp_base + ".wav", new_name)
+                print(f"Saved {new_name}", file=sys.stderr)
+            except Exception as e:
+                print(f"Error saving file for {voice}: {e}", file=sys.stderr)
         #print('usage: %s <text-to-synthesize>')
 
 #fr-FR-Chirp3-HD-Sadachbia
