@@ -5,6 +5,7 @@ from botLog import BotLog
 import os, signal, functools, socket, json, sys, random
 from unidecode import unidecode
 from difflib import SequenceMatcher
+from deepl_trans import translateFR2
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -242,7 +243,6 @@ class BotBrain:
 
         #### <<<< A COMMENTER SI LE MODELE NE PRODUIT PLUS DE REPONSES EN ESPAGNOL
 
-        from deepl_trans import translateFR2
         #if(detected_lang != "fr"):
         print("ORIGINAL:", str)
         str = translateFR2(str)
