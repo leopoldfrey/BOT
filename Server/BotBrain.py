@@ -21,6 +21,7 @@ API_KEY_PATH = "../secret/openai_api_key.json"
 api_key = ""
 
 SIMILAR = 0.85
+ENABLE_TRANSLATION = True
 
 with open(API_KEY_PATH) as json_file:
     json_data = json.load(json_file)
@@ -240,13 +241,14 @@ class BotBrain:
         #detected_lang = detect(str)
         #print("DETECTED LANGUAGE:", detected_lang)
 
-        #### <<<< A COMMENTER SI LE MODELE NE PRODUIT PLUS DE REPONSES EN ESPAGNOL
+        #### TRADUCTION (contrôlée par ENABLE_TRANSLATION)
 
-        from deepl_trans import translateFR2
-        #if(detected_lang != "fr"):
-        print("ORIGINAL:", str)
-        str = translateFR2(str)
-        print("TRANSLATED:", str)
+        if ENABLE_TRANSLATION:
+            from deepl_trans import translateFR2
+            #if(detected_lang != "fr"):
+            print("ORIGINAL:", str)
+            str = translateFR2(str)
+            print("TRANSLATED:", str)
 
         #### >>>>>
 

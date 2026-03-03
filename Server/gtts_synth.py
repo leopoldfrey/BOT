@@ -14,11 +14,15 @@ print = functools.partial(print, end='\n',flush=True)
 
 VOICE = []
 
+# Pedalboard effect settings
+ENABLE_PEDALBOARD = False
+PITCH_SEMITONES = -4
+
 API_KEY_PATH = "../secret/gtts_api_key.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = API_KEY_PATH
 
 # Make a Pedalboard object, containing multiple plugins:
-board = Pedalboard([Gain(4),PitchShift(semitones=-3)]) #Chorus(),Reverb(room_size=0.02,damping=0.1,wet_level=0.7,dry_level=1.,width=0.9,freeze_mode=0)
+board = Pedalboard([PitchShift(semitones=PITCH_SEMITONES)]) #Gain(4),Chorus(),Reverb(room_size=0.02,damping=0.1,wet_level=0.7,dry_level=1.,width=0.9,freeze_mode=0)
 
 def get_voices():
     client = tts.TextToSpeechClient()
@@ -92,17 +96,20 @@ class TextToSpeech(Thread):
                 with open(filename, "wb") as out:
                     out.write(response.audio_content)
 
-                # # Read in a whole audio file:
-                # with AudioFile(filename, 'r') as f:
-                #   audio = f.read(f.frames)
-                #   samplerate = f.samplerate
+                # Read in a whole audio file:
+                with AudioFile(filename, 'r') as f:
+                    audio = f.read(f.frames)
+                    samplerate = f.samplerate
 
-                # # Run the audio through this pedalboard!
-                # effected = board(audio, samplerate)
+                # Run the audio through this pedalboard if enabled!
+                if ENABLE_PEDALBOARD:
+                    effected = board(audio, samplerate)
+                else:
+                    effected = audio
 
-                # # Write the audio back as a wav file:
-                # with AudioFile('processed-output.wav', 'w', samplerate, effected.shape[0]) as f:
-                #   f.write(effected)
+                # Write the audio back as a wav file:
+                with AudioFile('processed-output.wav', 'w', samplerate, effected.shape[0]) as f:
+                    f.write(effected)
 
                 if self.silent:
                     return
@@ -153,13 +160,16 @@ class TextToSpeechNoThread():
           audio = f.read(f.frames)
           samplerate = f.samplerate
 
-        # Run the audio through this pedalboard!
-        #effected = board(audio, samplerate)
+        # Run the audio through this pedalboard if enabled!
+        if ENABLE_PEDALBOARD:
+          effected = board(audio, samplerate)
+        else:
+          effected = audio
 
         # Write the audio back as a wav file:
         proc_filename = fname+".wav"
-        with AudioFile(proc_filename, 'w', samplerate, audio.shape[0]) as f:
-          f.write(audio)
+        with AudioFile(proc_filename, 'w', samplerate, effected.shape[0]) as f:
+          f.write(effected)
 
         end = time.perf_counter()
         print(f"Google Time to first chunk: {end-start}s", file=sys.stderr)
