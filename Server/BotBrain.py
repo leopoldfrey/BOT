@@ -117,16 +117,11 @@ class BotBrain:
             messages=messages,
             temperature=0.8,
             top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
+            frequency_penalty=0.3,
+            presence_penalty=0.6,
             max_tokens=100
         )
-        ai_text = response.choices[0].message.content
-        self.history.append({"role": "user",      "content": phrase})
-        self.history.append({"role": "assistant", "content": ai_text})
-        if len(self.history) > 100:          # keep last 50 turns
-            self.history = self.history[2:]  # drop oldest turn (2 messages)
-        return ai_text
+        return response.choices[0].message.content
 
     # initalisation de conversation déclenchée par le controleur principal (quand on décroche le téléphone)
     def newConversation(self):
@@ -232,6 +227,11 @@ class BotBrain:
             self.lastresponse = self.postProcess(self._invoke(phrase))
             print(f"[BotBrain] model time (fallback): {time.time()-_t0:.2f}s")
         finally:
+            # append to history once, after the final accepted response
+            self.history.append({"role": "user",      "content": phrase})
+            self.history.append({"role": "assistant", "content": self.lastresponse})
+            if len(self.history) > 100:
+                self.history = self.history[2:]
             print("[BotBrain]",self.curPart,self.lastresponse)
         self.log.logBot(self.curPart, self.lastresponse)
         self.osc_client.send('/lastresponse', self.lastresponse)
