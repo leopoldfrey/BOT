@@ -6,6 +6,7 @@ import os, signal, functools, socket, json, sys, random, time
 from unidecode import unidecode
 from difflib import SequenceMatcher
 from deepl_trans import translateFR2
+from openai import OpenAI
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -27,16 +28,6 @@ ENABLE_TRANSLATION = False
 with open(API_KEY_PATH) as json_file:
     json_data = json.load(json_file)
     api_key = json_data['key']
-
-from langchain.chains import ConversationChain
-from langchain.memory import (
-    CombinedMemory,
-    ConversationBufferMemory,
-    ConversationBufferWindowMemory,
-
-)
-from langchain_core.prompts import PromptTemplate
-from langchain_openai.chat_models import ChatOpenAI
 
 def contains(str, substr):
     if substr:
@@ -64,22 +55,15 @@ class BotBrain:
         self.curStep = 0
         self.curPart = 0
         self.lastresponse = ""
-        
+
         self.ai_prefix = "Don Quijote:"
         self.human_prefix = "Sancho:"
-        self.endPrompt = """
-
-        
-        Conversación actual:
-        {chat_history_lines}
-        Sancho: {input}
-        Don Quijote:"""
 
         self.def_prompt = "Tu eres Don Quijote de la Mancha de Cervantes, acabas de despertar en 2024, con resaca de mal humor y enfadado e intentas actualizarte haciendo preguntas sobre el mundo actual.  Intentas saber donde se encuentran las grandes aventuras de caballeros hoy, y buscas un nuevo escudero para acompanarte en tus futuras aventuras. Hablas con frases cortas, directas, con humor y a la primera persona. Haces preguntas a tu interlocutor para saber si podria ser un buen escudero para acompnarte en las proximas hazanas."
 
         self.adios = ["adios", "adíos", "hasta luego", "nos vemos pronto", "hasta pronto", "hasta mañana", "hasta la vista", "hasta la proxima", "ciao", "chao", "voy a colgar", "cuelgo" , "au revoir", "goodbye", "bye", "see you later", "see you soon", "talk to you later", "talk to you soon", "à bientôt"]
 
-        self.llm = None
+        self.client = None
         self._llm_model = None
         self.filename = data
         self.loadData()
@@ -88,32 +72,19 @@ class BotBrain:
 
     def resetMemory(self):
         print("RESET MEMORY")
-        self.conv_memory = ConversationBufferWindowMemory(k=50,
-            memory_key="chat_history_lines", input_key="input",  ai_prefix=self.ai_prefix, human_prefix=self.human_prefix
-        )
-        self.memory = self.conv_memory
+        self.history = []
 
     def setPrompt(self, prompt):
-        self.conversation_prompt = prompt
-        print("SET NEW PROMPT", self.conversation_prompt)
-        self.PROMPT = PromptTemplate(
-            input_variables=["input", "chat_history_lines"],
-            template=self.conversation_prompt,
-        )
-        if self.llm is None or self._llm_model != self.model:
+        self.system_prompt = prompt
+        print("SET NEW PROMPT", self.system_prompt)
+        if self.client is None or self._llm_model != self.model:
             print("WITH MODEL:", self.model)
-            self.llm = ChatOpenAI(api_key=api_key, model=self.model, temperature=1, top_p=1, frequency_penalty=0, presence_penalty=0, max_tokens=80)
+            self.client = OpenAI(api_key=api_key)
             self._llm_model = self.model
-        self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
 
     def addPrompt(self, prompt):
-        self.conversation_prompt = self.def_prompt+" "+prompt+" "+self.endPrompt
-        print("ADD NEW PROMPT", self.conversation_prompt)
-        self.PROMPT = PromptTemplate(
-            input_variables=["input", "chat_history_lines"],
-            template=self.conversation_prompt,
-        )
-        self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
+        self.system_prompt = self.def_prompt + " " + prompt
+        print("ADD NEW PROMPT", self.system_prompt)
 
     def loadData(self):
         print("[BotBrain] Loading data")
@@ -128,14 +99,34 @@ class BotBrain:
             self.goodbyes = data['sentences']["goodbyes"]
             self.human_prefix = data['settings']['username']
             self.ai_prefix = data['settings']['botname']
-            self.endPrompt = data['settings']['end_prompt']
             self.model = data['settings']['model']
 
-        #print("\tSequence:", type(self.sequence), self.sequence)
-        #print("\t0:", self.sequence[0])
         self.def_prompt = self.sequence[0]['prompt']
         self.resetMemory()
-        self.setPrompt(self.def_prompt+self.endPrompt)
+        self.setPrompt(self.def_prompt)
+
+    def _invoke(self, phrase):
+        messages = (
+            [{"role": "system", "content": self.system_prompt}]
+            + self.history
+            + [{"role": "user", "content": phrase}]
+        )
+        print(f"[BotBrain] full prompt:\n" + "\n".join(f"  [{m['role']}] {m['content']}" for m in messages))
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=0.8,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            max_tokens=100
+        )
+        ai_text = response.choices[0].message.content
+        self.history.append({"role": "user",      "content": phrase})
+        self.history.append({"role": "assistant", "content": ai_text})
+        if len(self.history) > 100:          # keep last 50 turns
+            self.history = self.history[2:]  # drop oldest turn (2 messages)
+        return ai_text
 
     # initalisation de conversation déclenchée par le controleur principal (quand on décroche le téléphone)
     def newConversation(self):
@@ -155,6 +146,7 @@ class BotBrain:
         if(self.lastresponse == ""):
             self.getResponse("")
         else:
+            self.history.append({"role": "assistant", "content": self.lastresponse})
             self.log.logBot(self.curPart, self.lastresponse)
             self.osc_client.send('/lastresponse',self.lastresponse)
 
@@ -206,6 +198,7 @@ class BotBrain:
                     print("ERROR ! NO PROMPT !")
                 if(self.sequence[self.curPart]["first"]):
                     self.lastresponse = self.sequence[self.curPart]['first']
+                    self.history.append({"role": "assistant", "content": self.lastresponse})
                     self.log.logBot(self.curPart, self.lastresponse)
                     self.osc_client.send('/lastresponse',self.lastresponse)
                     return None
@@ -214,18 +207,12 @@ class BotBrain:
             except IndexError:
                 print("ERROR, NO MORE PARTS")
                 self.endConversation(phrase)
-                #self.lastresponse = 'adelante Sancho, hablamos luego!'
-                #self.log.logBot(self.curPart, self.lastresponse)
-                #self.osc_client.send('/end',self.lastresponse)
                 return None
 
         prev = self.lastresponse
         try:
-            memory_vars = self.memory.load_memory_variables({})
-            full_prompt = self.PROMPT.format(input=phrase, **memory_vars)
-            print(f"[BotBrain] full prompt:\n{full_prompt}")
             _t0 = time.time()
-            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+            self.lastresponse = self.postProcess(self._invoke(phrase))
             print(f"[BotBrain] model time: {time.time()-_t0:.2f}s")
             #CHECK REPETITION
             count = 0
@@ -233,7 +220,7 @@ class BotBrain:
             while sim > SIMILAR:
                 print("_____ SIMILARITY :",sim)
                 _t0 = time.time()
-                self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+                self.lastresponse = self.postProcess(self._invoke(phrase))
                 print(f"[BotBrain] model time (retry): {time.time()-_t0:.2f}s")
                 sim = similar(self.lastresponse, prev)
                 count += 1
@@ -242,7 +229,7 @@ class BotBrain:
         except:
             print("¡¡¡Error!!!")
             _t0 = time.time()
-            self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+            self.lastresponse = self.postProcess(self._invoke(phrase))
             print(f"[BotBrain] model time (fallback): {time.time()-_t0:.2f}s")
         finally:
             print("[BotBrain]",self.curPart,self.lastresponse)
@@ -311,13 +298,11 @@ class BotBrain:
             self.model = args[0]
             print("NEW MODEL", self.model)
             self.resetMemory()
-            self.setPrompt(self.conversation_prompt)
+            self.setPrompt(self.system_prompt)
         elif(address == '/botname'):
             self.ai_prefix = args[0]
         elif(address == '/username'):
             self.human_prefix = args[0]
-        elif(address == '/end_prompt'):
-            self.endPrompt = args[0]
         else:
             pass
             '''print("[BotBrain] OSC IN : "+str(address))

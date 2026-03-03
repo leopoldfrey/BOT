@@ -32,12 +32,6 @@ jiter==0.8.2
 jsonpatch==1.33
 jsonpointer==3.0.0
 langdetect==1.0.9
-langchain==0.3.0
-langchain-core==0.3.33
-langchain-mistralai==0.2.0
-langchain-openai==0.3.3
-langchain-text-splitters==0.3.0
-langsmith==0.1.147
 multidict==6.1.0
 numpy==1.26.4
 openai==1.61.0
