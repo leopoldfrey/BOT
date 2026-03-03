@@ -23,7 +23,7 @@ API_KEY_PATH = "../secret/openai_api_key.json"
 api_key = ""
 
 SIMILAR = 0.85
-ENABLE_TRANSLATION = False
+ENABLE_TRANSLATION = True
 
 with open(API_KEY_PATH) as json_file:
     json_data = json.load(json_file)
@@ -119,7 +119,7 @@ class BotBrain:
             top_p=1,
             frequency_penalty=0.3,
             presence_penalty=0.6,
-            max_tokens=100
+            max_tokens=200
         )
         return response.choices[0].message.content
 
