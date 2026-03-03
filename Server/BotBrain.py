@@ -2,7 +2,7 @@
 
 from pyosc import Client, Server
 from botLog import BotLog
-import os, signal, functools, socket, json, sys, random
+import os, signal, functools, socket, json, sys, random, time
 from unidecode import unidecode
 from difflib import SequenceMatcher
 
@@ -74,6 +74,8 @@ class BotBrain:
 
         self.adios = ["adios", "adíos", "hasta luego", "nos vemos pronto", "hasta pronto", "hasta mañana", "hasta la vista", "ciao", "chao", "voy a colgar", "cuelgo" ]
 
+        self.llm = None
+        self._llm_model = None
         self.filename = data
         self.loadData()
 
@@ -93,8 +95,10 @@ class BotBrain:
             input_variables=["input", "chat_history_lines"],
             template=self.conversation_prompt,
         )
-        print("WITH MODEL:", self.model)
-        self.llm = ChatOpenAI(api_key=api_key, model=self.model, temperature=0.8, top_p=1, frequency_penalty=0, presence_penalty=0)
+        if self.llm is None or self._llm_model != self.model:
+            print("WITH MODEL:", self.model)
+            self.llm = ChatOpenAI(api_key=api_key, model=self.model, temperature=1, top_p=1, frequency_penalty=0, presence_penalty=0, max_tokens=80)
+            self._llm_model = self.model
         self.conversation = ConversationChain(llm=self.llm, verbose=False, memory=self.memory, prompt=self.PROMPT)
 
     def addPrompt(self, prompt):
@@ -210,16 +214,25 @@ class BotBrain:
 
         prev = self.lastresponse
         try:
+            memory_vars = self.memory.load_memory_variables({})
+            full_prompt = self.PROMPT.format(input=phrase, **memory_vars)
+            print(f"[BotBrain] full prompt:\n{full_prompt}")
+            _t0 = time.time()
             self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+            print(f"[BotBrain] model time: {time.time()-_t0:.2f}s")
             #CHECK REPETITION
             sim = similar(self.lastresponse, prev)
             while sim > SIMILAR:
                 print("_____ SIMILARITY :",sim)
+                _t0 = time.time()
                 self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+                print(f"[BotBrain] model time (retry): {time.time()-_t0:.2f}s")
                 sim = similar(self.lastresponse, prev)
         except:
             print("¡¡¡Error!!!")
+            _t0 = time.time()
             self.lastresponse = self.postProcess(self.conversation.invoke({"input": phrase})['response'])
+            print(f"[BotBrain] model time (fallback): {time.time()-_t0:.2f}s")
         finally:
             print("[BotBrain]",self.curPart,self.lastresponse)
         self.log.logBot(self.curPart, self.lastresponse)

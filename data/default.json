@@ -8,7 +8,7 @@
         "speed": 1.0,
         "voice": "es-ES-Neural2-B",
         "lang": "es-ES",
-        "model": "ft:gpt-4o-mini-2024-07-18:personal:quijote-10interactions:AwdjqR1Y:ckpt-step-1408",
+        "model": "ft:gpt-4.1-mini-2025-04-14:personal:quijote-10interactions:DEuDlkRg:ckpt-step-1408",
         "botname": "Don Quijote",
         "username": "Sancho",
         "end_prompt": "Conversacion actual:\n{chat_history_lines}\nSancho: {input}\nDon Quijote:"
