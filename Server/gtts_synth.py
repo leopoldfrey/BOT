@@ -14,13 +14,17 @@ print = functools.partial(print, end='\n',flush=True)
 
 VOICE = []
 
+# Pedalboard effect settings
+ENABLE_PEDALBOARD = False
+PITCH_SEMITONES = -4
+
 API_KEY_PATH = "../secret/gtts_api_key.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = API_KEY_PATH
 
 _tts_client = tts.TextToSpeechClient()
 
 # Make a Pedalboard object, containing multiple plugins:
-board = Pedalboard([Gain(4),PitchShift(semitones=-3)]) #Chorus(),Reverb(room_size=0.02,damping=0.1,wet_level=0.7,dry_level=1.,width=0.9,freeze_mode=0)
+board = Pedalboard([PitchShift(semitones=PITCH_SEMITONES)]) #Gain(4),Chorus(),Reverb(room_size=0.02,damping=0.1,wet_level=0.7,dry_level=1.,width=0.9,freeze_mode=0)
 
 def get_voices():
     voices = _tts_client.list_voices()
@@ -92,17 +96,20 @@ class TextToSpeech(Thread):
                 with open(filename, "wb") as out:
                     out.write(response.audio_content)
 
-                # # Read in a whole audio file:
-                # with AudioFile(filename, 'r') as f:
-                #   audio = f.read(f.frames)
-                #   samplerate = f.samplerate
+                # Read in a whole audio file:
+                with AudioFile(filename, 'r') as f:
+                    audio = f.read(f.frames)
+                    samplerate = f.samplerate
 
-                # # Run the audio through this pedalboard!
-                # effected = board(audio, samplerate)
+                # Run the audio through this pedalboard if enabled!
+                if ENABLE_PEDALBOARD:
+                    effected = board(audio, samplerate)
+                else:
+                    effected = audio
 
-                # # Write the audio back as a wav file:
-                # with AudioFile('processed-output.wav', 'w', samplerate, effected.shape[0]) as f:
-                #   f.write(effected)
+                # Write the audio back as a wav file:
+                with AudioFile('processed-output.wav', 'w', samplerate, effected.shape[0]) as f:
+                    f.write(effected)
 
                 if self.silent:
                     return
@@ -153,13 +160,16 @@ class TextToSpeechNoThread():
           audio = f.read(f.frames)
           samplerate = f.samplerate
 
-        # Run the audio through this pedalboard!
-        #effected = board(audio, samplerate)
+        # Run the audio through this pedalboard if enabled!
+        if ENABLE_PEDALBOARD:
+          effected = board(audio, samplerate)
+        else:
+          effected = audio
 
         # Write the audio back as a wav file:
         proc_filename = fname+".wav"
-        with AudioFile(proc_filename, 'w', samplerate, audio.shape[0]) as f:
-          f.write(audio)
+        with AudioFile(proc_filename, 'w', samplerate, effected.shape[0]) as f:
+          f.write(effected)
 
         end = time.perf_counter()
         print(f"Google Time to first chunk: {end-start}s", file=sys.stderr)
@@ -191,15 +201,31 @@ if __name__ == '__main__':
         # tts.synthesize(sys.argv[1])
     else:
         v = get_voices("fr-FR")
-        #v = ['es-ES-Neural2-B']
-        text = "Le sommeil m'envahit à nouveau, je m'endors, réveillez-moi vite."
+        text = "Le sommeil m\'envahit à nouveau, je m'endors, réveillez-moi vite."
         sp = 1
         pi = 0
-        for i in range(len(v)):
-            #print(v[i])
-            thd = TextToSpeech(text = text, pitch = pi, speed = sp, voice=v[i], lang='fr-FR')
-            thd.start()
-            sleep(5)
+        # prepare exports directory inside Server
+        base_dir = os.path.dirname(__file__)
+        export_dir = os.path.join(base_dir, 'exports')
+        os.makedirs(export_dir, exist_ok=True)
+        tts_nt = TextToSpeechNoThread()
+        for i, voice in enumerate(v):
+            # sanitize voice name for filenames
+            safe_voice = re.sub(r'[^A-Za-z0-9._-]', '_', voice)
+            tmp_base = os.path.join(export_dir, f"tmp_{safe_voice}_{i}")
+            start = time.perf_counter()
+            # synthesize to temporary file without playing (written in export_dir)
+            tts_nt.synthesize(text, pitch=pi, speed=sp, voice=voice, fname=tmp_base, play=False, lang='fr-FR')
+            end = time.perf_counter()
+            duration = end - start
+            duration_str = f"{duration:.2f}s"
+            # put duration first in filename
+            new_name = os.path.join(export_dir, f"{duration_str}_{safe_voice}.wav")
+            try:
+                os.replace(tmp_base + ".wav", new_name)
+                print(f"Saved {new_name}", file=sys.stderr)
+            except Exception as e:
+                print(f"Error saving file for {voice}: {e}", file=sys.stderr)
         #print('usage: %s <text-to-synthesize>')
 
 #fr-FR-Chirp3-HD-Sadachbia
