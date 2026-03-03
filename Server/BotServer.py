@@ -5,7 +5,7 @@ from sys import platform as _platform
 from bottle import static_file
 from gtts_synth import TextToSpeech
 #from openai_synth3 import TextToSpeech
-from threading import Thread
+from threading import Thread, Event
 from websocket_server import WebsocketServer
 from pyosc import Client, Server
 #from deepl_trans import translateFR, translateES, translate
