@@ -98,7 +98,7 @@
             recognition.onend = function(event) {
               //console.log('recognition: end, restart');
               try {
-                recognition.start();
+                if (!$silent) recognition.start();
               } catch (e) {}
               if ($silent == false) {
                 updateStatus("Ready", "green");
@@ -231,7 +231,7 @@
         }
         //console.log("WEBSOCKET SILENT", $silent)
         if ($silent == true) {
-          // recognition.stop();
+          recognition.stop();
         } else {
           p = $('<p class="speech_you"></p>');
           $sp.append(p);
