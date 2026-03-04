@@ -52,10 +52,11 @@ def get_voices(lang):
     return VOICE
 
 class TextToSpeech(Thread):
-    def __init__(self, text, pitch=-10.0, speed=.9, voice="es-ES-Neural2-B", silent=False, lang="es-ES"):
+    def __init__(self, text, pitch=0.0, speed=.9, voice="es-ES-Neural2-B", silent=False, lang="es-ES"):
         Thread.__init__(self)
         print("[Server] [TextToSpeech]", pitch, speed, voice)
         self.language_code = lang
+        text = text.replace('\u2019', "'").replace('\u2018', "'")
         chunks = re.split(r'(?<=[.])\s+(?=[A-ZÁÉÍÓÚÜÑ¿¡])', text.strip())
         self.textA = [c for c in chunks if c.strip()]
         if not self.textA:

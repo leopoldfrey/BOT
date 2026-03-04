@@ -19,15 +19,25 @@ print = functools.partial(print, end='\n',flush=True)
 
 serverIP = "127.0.0.1"
 
-API_KEY_PATH = "../secret/openai_api_key.json"
-api_key = ""
-
 SIMILAR = 0.85
 ENABLE_TRANSLATION = True
 
-with open(API_KEY_PATH) as json_file:
-    json_data = json.load(json_file)
-    api_key = json_data['key']
+def _load_key(path):
+    with open(path) as f:
+        return json.load(f)["key"]
+
+def _detect_provider(model):
+    if model.startswith("claude-"):
+        return "claude"
+    if "mistral" in model.lower():
+        return "mistral"
+    return "openai"
+
+PROVIDER = {
+    "openai":  {"key_file": "../secret/openai_api_key.json",    "base_url": None},
+    "mistral": {"key_file": "../secret/mistral_api_key.json",   "base_url": "https://api.mistral.ai/v1"},
+    "claude":  {"key_file": "../secret/anthropic_api_key.json", "base_url": "https://api.anthropic.com/v1/"},
+}
 
 def contains(str, substr):
     if substr:
@@ -78,8 +88,13 @@ class BotBrain:
         self.system_prompt = prompt
         print("SET NEW PROMPT", self.system_prompt)
         if self.client is None or self._llm_model != self.model:
-            print("WITH MODEL:", self.model)
-            self.client = OpenAI(api_key=api_key)
+            provider = _detect_provider(self.model)
+            cfg = PROVIDER[provider]
+            print("WITH MODEL:", self.model, "/ PROVIDER:", provider)
+            kwargs = {"api_key": _load_key(cfg["key_file"])}
+            if cfg["base_url"]:
+                kwargs["base_url"] = cfg["base_url"]
+            self.client = OpenAI(**kwargs)
             self._llm_model = self.model
 
     def addPrompt(self, prompt):
@@ -112,15 +127,18 @@ class BotBrain:
             + [{"role": "user", "content": phrase}]
         )
         print(f"[BotBrain] full prompt:\n" + "\n".join(f"  [{m['role']}] {m['content']}" for m in messages))
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            temperature=0.8,
-            top_p=1,
-            frequency_penalty=0.3,
-            presence_penalty=0.6,
-            max_tokens=200
-        )
+        provider = _detect_provider(self.model)
+        params = {
+            "model": self.model,
+            "messages": messages,
+            "temperature": 0.8,
+            "max_tokens": 400,
+        }
+        if provider != "claude":
+            params["top_p"] = 1
+            params["frequency_penalty"] = 0.3
+            params["presence_penalty"] = 0.6
+        response = self.client.chat.completions.create(**params)
         return response.choices[0].message.content
 
     # initalisation de conversation déclenchée par le controleur principal (quand on décroche le téléphone)
