@@ -36,7 +36,8 @@
             "first": "Dans un village de La Manche, dont je préfère oublier le nom, je trouve enfin quelqu'un à qui parler, Que t'arrive-t-il, Sancho, Tu as changé, j'ai du mal à reconnaître ta voix, Tu sembles étrange, malade, quel trouble m'habite, le trouble des siècles qui ont défilé au-dessus de ma tombe, Sancho, tu as l'air à moitié endormi, réveille-toi, Réveille-toi, mon ami, réveille-toi, car j'ai rêvé que l'imagination était capturée par des géants de lumière sans chaleur, Nous devons retrouver Dame Imagination et la sauver, sans elle, ce monde s'effondrera, Vite, Sancho, dis-moi où nous pouvons la trouver ?",
             "nb_inter": "10",
             "dur_max": "",
-            "option": "0"        },
+            "option": "1"
+        },
         "2": {
             "prompt": "",
             "first": "",
