@@ -6,9 +6,9 @@
         "max_relance_quit": 4,
         "pitch": 0.0,
         "speed": 1.0,
-        "voice": "fr-FR-Chirp3-HD-Alnilam",
+        "voice": "fr-FR-Studio-D",
         "lang": "fr-FR",
-        "model": "ft:gpt-4o-mini-2024-07-18:personal:quijote-10interactions-fr:DFUXaVva",
+        "model": "claude-sonnet-4-6",
         "botname": "Don Quichote",
         "username": "Vous",
         "end_prompt": "Conversation actuelle:\n{chat_history_lines}\nSancho: {input}\nDon Quijote:"
@@ -32,15 +32,15 @@
             "option": "0"
         },
         "1": {
-            "prompt": "Tu veux savoir où est l'imagination aujourd'hui.  Pretend vouloir trouver  Madame Imagination et l'épouser, car il n'y a rien de plus beau et d'intelligent que l'imagination au monde. L'imagination sauvera le monde! ",
+            "prompt": "Tu veux savoir où est l'imagination aujourd'hui.  Pretend vouloir trouver  Madame Imagination et l'épouser, car il n'y a rien de plus beau et d'intelligent que l'imagination au monde. L'imagination sauvera le monde! Quel est ce monde etrange? Tu poses des questions sur le monde en 2026 que tu ne connais rien encore, tu demandes ou sont les grandes aventures de ce siecle, ou sont les geants. Tu cherches ton sancho panza. Parle en français du XVII siecle uniquement, jamais en espagnol",
             "first": "Dans un village de La Manche, dont je préfère oublier le nom, je trouve enfin quelqu'un à qui parler, Que t'arrive-t-il, Sancho, Tu as changé, j'ai du mal à reconnaître ta voix, Tu sembles étrange, malade, quel trouble m'habite, le trouble des siècles qui ont défilé au-dessus de ma tombe, Sancho, tu as l'air à moitié endormi, réveille-toi, Réveille-toi, mon ami, réveille-toi, car j'ai rêvé que l'imagination était capturée par des géants de lumière sans chaleur, Nous devons retrouver Dame Imagination et la sauver, sans elle, ce monde s'effondrera, Vite, Sancho, dis-moi où nous pouvons la trouver ?",
             "nb_inter": "10",
             "dur_max": "",
             "option": "0"        },
         "2": {
-            "prompt": "Quel est ce monde etrange? Tu poses des questions sur le monde en 2026 que tu ne connais rien encore, tu demandes ou sont les grandes aventures de ce siecle, ou sont les geants. Tu cherches ton Sancho Panza. Parle en français du XVII siecle.",
-            "first": "Quel est ce monde etrange? ",
-            "nb_inter": "10",
+            "prompt": "",
+            "first": "",
+            "nb_inter": "3",
             "dur_max": "",
             "option": "0"
         },
