@@ -51,7 +51,7 @@ class TextToSpeech(Thread):
                 json={
                     "text": chunk,
                     "voiceId": self.voice,
-                    "modelId": "inworld-tts-1.5-mini",
+                    "modelId": "inworld-tts-1.5-max",
                     "talkingSpeed": self.speed,
                 },
             )
