@@ -5,6 +5,17 @@ from sys import platform as _platform
 from bottle import static_file
 from gtts_synth import TextToSpeech
 #from openai_synth3 import TextToSpeech
+
+def _load_tts_provider(provider):
+    global TextToSpeech
+    if provider == "elevenlabs":
+        from elevenlabs_synth import TextToSpeech as _TTS
+    elif provider == "inworld":
+        from inworld_synth import TextToSpeech as _TTS
+    else:
+        from gtts_synth import TextToSpeech as _TTS
+    TextToSpeech = _TTS
+    print("SET TTS PROVIDER", provider)
 from threading import Thread, Event
 from websocket_server import WebsocketServer
 from pyosc import Client, Server
@@ -734,6 +745,7 @@ class BotServer:
         print("SET USERNAME", self.config['username'])
         self.wsServer.broadcast({"command":"username", "value":self.config['username']})
         self.osc_client.send("/end_prompt", self.config['end_prompt'])
+        _load_tts_provider(self.config.get("tts_provider", "gtts"))
 
     def resume(self):
         self.silent = False
