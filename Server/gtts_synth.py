@@ -188,7 +188,7 @@ if __name__ == '__main__':
         thd = TextToSpeech(sys.argv[1])
         thd.start()
     elif len(sys.argv) == 3:
-        thd = TextToSpeech(sys.argv[1], voice=int(sys.argv[2]))
+        thd = TextToSpeech(sys.argv[1], voice=sys.argv[2], lang=sys.argv[2].split("-")[0]+"-"+sys.argv[2].split("-")[1])
         thd.start()
     elif len(sys.argv) == 4:
         thd = TextToSpeech(sys.argv[1], float(sys.argv[2]), float(sys.argv[3]))
