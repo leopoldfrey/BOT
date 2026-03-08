@@ -250,3 +250,15 @@ button:active {
 h5 {
   margin: 18px 0 0px 0;
 }
+
+@keyframes dots {
+  0%   { content: "."; }
+  33%  { content: ".."; }
+  66%  { content: "..."; }
+  100% { content: "."; }
+}
+
+.thinking::after {
+  content: ".";
+  animation: dots 1.2s steps(1) infinite;
+}

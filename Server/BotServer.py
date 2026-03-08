@@ -487,6 +487,8 @@ class BotServer:
             #if(DEBUG):
             #    mess = translateES(mess)
 
+            self.wsServer.broadcast({'command': '_bot', 'value': '...'})
+            
             if self.interactions >= self.maxinter :
                 self.osc_client.send("/end", mess)
             else :
@@ -496,9 +498,10 @@ class BotServer:
 
     def speak(self, txt):
         if self.voiceOn:
-            # print("SPEAK", txt, "pitch", self.pitch, "speed", self.speed)
+            #txt = txt.capitalize()
+            print("SPEAK", txt, "pitch", self.pitch, "speed", self.speed)
             #tts = TextToSpeech(txt, self.player_stream)
-            tts = TextToSpeech(txt, lang=self.lang, voice=self.voice)
+            tts = TextToSpeech(txt, lang=self.lang, voice=self.voice, on_chunk=lambda chunk: self.wsServer.broadcast({'command': '_bot', 'value': chunk}))
             tts.start()
             self.tg.addThread(tts)
         else:
@@ -538,10 +541,10 @@ class BotServer:
             self.sound_client.send("/phase", 2)
             self.interactions += 1
             self.lastInteractionTime = time.time()
-            self.wsServer.broadcast({'command':'_bot','value':self.tmp_response})
             #if(DEBUG or DEBUG2):
             #    print(">>", translateFR(self.tmp_response))
             self.speak(self.tmp_response)
+            #self.wsServer.broadcast({'command':'_bot','value':self.tmp_response})
         else:
             print("SERVER receiveResponse OFF", r)
 
@@ -579,6 +582,7 @@ class BotServer:
         self.silent = True
         self.wsServer.broadcast({'command':'silent','value':self.silent})
         self.lastInteractionTime = time.time()
+        self.wsServer.broadcast({'command': '_bot', 'value': '...'})
         self.osc_client.send("/start", 1)
 
     def endNap(self):

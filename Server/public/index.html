@@ -40,23 +40,18 @@
       <span class="info3" id="lang" style="display: none;"></span> / <span class="info3" id="dispVoice" style="display: none;"></span><br/>
       <span class="info3" id="model"></span>
     </div>
-
   </div>
   <script>
 
     document.addEventListener('keydown', function(event) {
-      // Vérifie si la touche "P" est pressée (majuscule ou minuscule)
       if (event.key === 'p' || event.key === 'P') {
         const phoneCheckbox = document.getElementById('phone');
-        // Inverse l'état de la case à cocher
         phoneCheckbox.checked = !phoneCheckbox.checked;
-        // Déclenche l'événement "change" pour synchroniser avec WebSocket
         phoneCheckbox.dispatchEvent(new Event('change'));
       }
       if (event.key === 'h' || event.key === 'H') {
         const infoDiv = document.getElementById('info');
         const topbarDiv = document.getElementById('topbar');
-        // Inverse l'affichage des divs
         if (infoDiv.style.display === 'none') {
           infoDiv.style.display = '';
           topbarDiv.style.display = '';
@@ -75,10 +70,6 @@
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
-          //window.localStream = stream; // A
-          //window.localAudio = stream; // B
-          //window.localAudio.autoplay = true; // C
-          // INIT webkitSpeechRecognition
           try {
             recognition = new webkitSpeechRecognition();
             if (recognition == null) {
@@ -93,10 +84,8 @@
               recognition.lang = "fr-FR";
             else
               recognition.lang = lang;
-            //recognition.lang = "en-GB";
             recognition.onresult = detect;
             recognition.onend = function(event) {
-              //console.log('recognition: end, restart');
               try {
                 if (!$silent) recognition.start();
               } catch (e) {}
@@ -106,30 +95,24 @@
                 updateStatus("Pause", "orange");
               }
             }
-
             recognition.onstart = function(event) {
-              //console.log('event: start');
               if ($silent == false) {
                 updateStatus("Ready", "green");
               } else {
                 updateStatus("Pause", "orange");
               }
             }
-
             recognition.start();
-
           } catch (e) {
             alert('ERROR: webkitSpeechRecognition not available');
             updateStatus("ERROR: webkitSpeechRecognition not available", "red");
           }
-
         })
         .catch((err) => {
           console.error(`you got an error: ${err}`);
         });
     }
 
-    // Fonction pour mettre à jour l'indicateur de statut
     function updateStatus(text, color) {
       statusText.textContent = text;
       statusText.style.color = color;
@@ -143,7 +126,8 @@
     var color = "#FFFFFF";
     var $silent = false;
     var $sp = $('#speech');
-    var p;
+    var p;      // paragraphe utilisateur
+    var botP;   // paragraphe bot
 
     $(".speech_you").attr('data-content', username+" : ");
     $(".speech_bot").attr('data-content', botname+ " : ");
@@ -155,25 +139,19 @@
 
     socket.onopen = function(e) {
       console.log("[open] Connection established");
-      socket.send(JSON.stringify({
-        'command': 'connect'
-      }));
+      socket.send(JSON.stringify({'command': 'connect'}));
     };
 
     socket.onmessage = function(event) {
-      // console.log(`[message] Data received from server: ${event.data}`);
       data = JSON.parse(event.data);
       if (data.command == "on") {
-        //console.log("ON", data.value);
         $("#on").prop("checked", data.value);
       } else if (data.command == "voices") {
-        //console.log("VOICES", data.value);
       } else if (data.command == "model") {
         $("#model").html(data.value)
       } else if (data.command == "voice") {
         $("#dispVoice").html(data.value)
       } else if (data.command == "lang") {
-        //console.log("change language :", data.value);
         lang = data.value;
         try{
           if(DEBUG)
@@ -183,41 +161,50 @@
         } catch (e) {
           console.warn(`no recognition for now: ${e}`);
         }
-        
-        //console.log($("#lang"));
         $("#lang").html(lang);
       } else if (data.command == "phone") {
-        //console.log("PHONE", data.value);
         $("#phone").prop("checked", data.value);
       } else if (data.command == "facedetect") {
-        //console.log("FACEDETECT", data.value);
         $("#facedetect").prop("checked", data.value);
       } else if (data.command == "message") {
         console.log("[ws]", data);
       } else if (data.command == "botname") {
         botname = data.value;
-        last_bot =  $("#speech").children(".speech_bot").last();
+        last_bot = $("#speech").children(".speech_bot").last();
         last_bot.attr('data-content', botname+ " : ");
         $("#botname").html(botname);
         console.log("BOTNAME", botname);
       } else if (data.command == "username") {
         username = data.value;
-        last_bot =  $("#speech").children(".speech_you").last();
+        last_bot = $("#speech").children(".speech_you").last();
         last_bot.attr('data-content', username+ " : ");
         $("#username").html(username);
         console.log("USERNAME", username);
-      } else if (data.command == "bot" || data.command == "_bot") {
+      } else if (data.command == "bot") {
+        // Réponse complète du bot (non chunked)
         console.log("BOT", data.value);
-        if (!p || p.text() != "") {
-          p = $('<p class="speech_you"></p>');
-          $sp.append(p);
+        botP = $('<p class="speech_bot thinking"></p>');
+        $(botP).attr('data-content', botname + " : ");
+        $(botP).css('color', color);
+        $sp.append(botP);
+        $(botP).get(0).scrollIntoView();
+      } else if (data.command == "_bot") {
+        // Réponse chunked du bot
+        console.log("_BOT", data.value);
+        if (data.value === "...") {
+          // Début de synthèse → nouveau paragraphe avec animation
+          botP = $('<p class="speech_bot thinking"></p>');
+          $(botP).attr('data-content', botname + " : ");
+          $(botP).css('color', color);
+          $sp.append(botP);
+          $(botP).get(0).scrollIntoView();
+        } else {
+          // Chunk audio terminé → accumule dans le paragraphe bot courant
+          $(botP).removeClass("thinking");
+          var current = $(botP).text();
+          $(botP).text(current ? current + " " + data.value : data.value);
+          $(botP).get(0).scrollIntoView();
         }
-        $(p).removeClass("speech_you");
-        $(p).attr('data-content', botname+" : ")
-        $(p).addClass("speech_bot");
-        $(p).css('color', color);
-        $(p).text(data.value);
-        $(p).get(0).scrollIntoView();
       } else if (data.command == "clear") {
         $sp.empty();
       } else if (data.command == "timers") {
@@ -229,7 +216,6 @@
         } else {
           updateStatus("Ready", "green");
         }
-        //console.log("WEBSOCKET SILENT", $silent)
         if ($silent == true) {
           recognition.stop();
         } else {
@@ -242,21 +228,17 @@
         }
       } else if (data.command == "_user") {
         // FOR DISPLAY VERSION
-      } else if (data.command == "_bot") {
-        // FOR DISPLAY VERSION
       } else if (data.command == "params") {
         console.log("HERE", typeof(data), data);
         username = data.username;
-        last_bot =  $("#speech").children(".speech_you").last();
+        last_bot = $("#speech").children(".speech_you").last();
         last_bot.attr('data-content', username+ " : ");
         $("#username").html(username);
-        //console.log("USERNAME", username);
         botname = data.botname;
         color = data.color;
-        last_bot =  $("#speech").children(".speech_bot").last();
+        last_bot = $("#speech").children(".speech_bot").last();
         last_bot.attr('data-content', botname+ " : ");
         $("#botname").html(botname);
-        //console.log("BOTNAME", botname);
         $("#dispVoice").html(data.voice+" (speed :"+data.speed+")");
         console.log("VOICE", data.voice,"speed", data.speed);
         $("#model").html(data.model);
@@ -269,7 +251,6 @@
         } catch (e) {
           console.warn(`no recognition for now : ${e}`);
         }
-        
         $("#lang").html(lang);
         console.log("LANG", lang);
         $("#model").html(data.model);
@@ -288,28 +269,21 @@
     };
 
     function pause() {
-      socket.send(JSON.stringify({
-        'command': 'pause'
-      }));
+      socket.send(JSON.stringify({'command': 'pause'}));
     }
 
     function reset() {
-      socket.send(JSON.stringify({
-        'command': 'reset'
-      }));
+      socket.send(JSON.stringify({'command': 'reset'}));
     }
 
     function stop() {
-      socket.send(JSON.stringify({
-        'command': 'stop'
-      }));
+      socket.send(JSON.stringify({'command': 'stop'}));
     }
 
     function convertTime(t) {
       s = Math.floor(t);
       ss = s % 60;
       m = Math.floor(s / 60);
-      // console.log(m, ss);
       return zeroPad(m, 2) + ":" + zeroPad(ss, 2);
     }
 
@@ -318,7 +292,6 @@
       return Array(+(zero > 0 && zero)).join("0") + num;
     }
 
-    // POLL SPEECH TO TEXT
     function detect(event) {
       if (timer != null)
         clearTimeout(timer);
@@ -326,16 +299,12 @@
       for (var i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i][0].confidence < .5)
           continue;
-        //console.log("result", i, "conf:", event.results[i][0].confidence, "final:", event.results[i].isFinal, "transcript:", event.results[i][0].transcript)
         if (!$silent) {
           $(p).text(event.results[i][0].transcript);
           $(p).get(0).scrollIntoView();
           if (event.results[i].isFinal) {
             recognition.stop();
             console.log("USER", event.results[i][0].transcript);
-            p = $('<p class="speech_bot" data-content="'+botname+' : " style="color: '+color+'"></p>');
-            // $(p).text("...");
-            $sp.append(p);
           }
           $.ajax({
             type: "POST",
@@ -354,13 +323,11 @@
       }, 5000);
     }
 
-    // POLL FUNCTION FOR TIMERS
     setInterval(function() {
       $.ajax({
         type: "GET",
         url: '/poll',
         success: function(data) {
-          // console.log(data);
           if (data.restart == true) {
             window.location.reload(false);
           }
@@ -369,7 +336,6 @@
     }, 100);
 
     $("#phone").change(function() {
-      // console.log($("#phone").prop('checked'));
       $silent = !$("#phone").prop('checked');
       if ($silent) {
         updateStatus("Pause","orange");
@@ -390,9 +356,7 @@
     });
 
     $("#end").click(function() {
-      socket.send(JSON.stringify({
-        'command': 'end'
-      }));
+      socket.send(JSON.stringify({'command': 'end'}));
     })
 
     $("#voice").change(function() {
