@@ -501,7 +501,11 @@ class BotServer:
             #txt = txt.capitalize()
             print("SPEAK", txt, "pitch", self.pitch, "speed", self.speed)
             #tts = TextToSpeech(txt, self.player_stream)
-            tts = TextToSpeech(txt, lang=self.lang, voice=self.voice, on_chunk=lambda chunk: self.wsServer.broadcast({'command': '_bot', 'value': chunk}))
+            def handle_chunk(chunk):
+                self.wsServer.broadcast({'command': '_bot', 'value': chunk})
+                self.lastInteractionTime = time.time()
+
+            tts = TextToSpeech(txt, lang=self.lang, voice=self.voice, on_chunk=handle_chunk)
             tts.start()
             self.tg.addThread(tts)
         else:

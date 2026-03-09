@@ -40,7 +40,7 @@ OPENAI_CLIENT = openai.OpenAI()
 # Global stop event
 
 class TextToSpeech(Thread):
-    def __init__(self, text, stream, silent=False):
+    def __init__(self, text, stream, silent=False, on_chunk=None):
         Thread.__init__(self)
         print("[Server] [TextToSpeech]",len(text), text)
         self.text = text
@@ -49,6 +49,7 @@ class TextToSpeech(Thread):
         self.pid = 0
         self.player_stream = stream
         self.stop_event = threading.Event()
+        self.on_chunk = on_chunk
 
     def stop(self):
         self.stop_event.set()
@@ -142,6 +143,8 @@ class TextToSpeech(Thread):
 
             print(f"> {phrase}")
             phrase_queue.put(phrase)
+            if self.on_chunk:
+                self.on_chunk(phrase)
 
 
     def text_to_speech_processor(

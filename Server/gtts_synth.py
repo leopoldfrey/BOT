@@ -52,7 +52,7 @@ def get_voices(lang):
     return VOICE
 
 class TextToSpeech(Thread):
-    def __init__(self, text, pitch=0.0, speed=.9, voice="es-ES-Neural2-B", silent=False, lang="es-ES"):
+    def __init__(self, text, pitch=0.0, speed=.9, voice="es-ES-Neural2-B", silent=False, lang="es-ES", on_chunk=None):
         Thread.__init__(self)
         print("[Server] [TextToSpeech]", pitch, speed, voice)
         self.language_code = lang
@@ -71,6 +71,7 @@ class TextToSpeech(Thread):
         self._running = True
         self.silent = silent
         self.pid = 0
+        self.on_chunk = on_chunk
 
     def stop(self):
         # print("TODO STOP VOICE", self.pid)
@@ -119,6 +120,9 @@ class TextToSpeech(Thread):
                     self.pid = self.proc.pid
                     # print("process pid", self.pid)
                     self.proc.wait()
+                    if self.on_chunk:
+                        self.on_chunk(t)  # 't' est la variable utilisée ici, pas 'chunk'
+
                     # while (self.proc.poll() is None):
                     #     print("wait")
                     #     time.sleep(1)
