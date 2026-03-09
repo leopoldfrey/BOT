@@ -20,7 +20,7 @@ print = functools.partial(print, end='\n',flush=True)
 serverIP = "127.0.0.1"
 
 SIMILAR = 0.85
-ENABLE_TRANSLATION = True
+ENABLE_TRANSLATION = False
 
 def _load_key(path):
     with open(path) as f:
