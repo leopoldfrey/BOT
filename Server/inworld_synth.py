@@ -45,6 +45,12 @@ class TextToSpeech(Thread):
                 break
             chunk = chunk.capitalize()
             print("[Inworld] synthesizing:", chunk[:60])
+            # print("[Inworld] payload:", json.dumps({
+            #     "text": chunk,
+            #     "voiceId": self.voice,
+            #     "modelId": "inworld-tts-1.5-max",
+            #     "talkingSpeed": self.speed,
+            # }, ensure_ascii=False))
             response = requests.post(
                 INWORLD_ENDPOINT,
                 headers={
@@ -58,7 +64,10 @@ class TextToSpeech(Thread):
                     "talkingSpeed": self.speed,
                 },
             )
-            response.raise_for_status()
+            #response.raise_for_status()
+            if not response.ok:
+                print("[Inworld] error response:", response.text)
+                response.raise_for_status()
             audio_bytes = base64.b64decode(response.json()["audioContent"])
             filename = f"inworld-output-{i}.mp3"
             with open(filename, "wb") as f:

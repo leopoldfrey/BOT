@@ -2,10 +2,10 @@
     "settings": {
         "max_inter": 30,
         "max_inter_s": 300,
-        "max_silence": 60,
+        "max_silence": 30,
         "max_relance_quit": 4,
         "pitch": 0.0,
-        "speed": 1.0,
+        "speed": 1.19,
         "tts_provider": "inworld",
         "voice": "Alain",
         "lang": "fr-FR",
@@ -19,7 +19,9 @@
             "Le sommeil m'envahit \u00e0 nouveau, je m'endors, r\u00e9veillez-moi vite. R\u00e9veillez-moi vite..."
         ],
         "relaunch": [
-            "Sancho, m'\u00e9coutes-tu ?,Quelles seront nos prochaines aventures ?,Tu es tr\u00e8s lent Sancho"
+            "Sancho, m'\u00e9coutes-tu ?",
+            "Quelles seront nos prochaines aventures ?", 
+            "Tu es tr\u00e8s lent Sancho !"
         ]
     },
     "sequence": {

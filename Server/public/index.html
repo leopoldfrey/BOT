@@ -219,9 +219,15 @@
         if ($silent == true) {
           recognition.stop();
         } else {
-          p = $('<p class="speech_you"></p>');
-          $sp.append(p);
-          $(".speech_you").attr('data-content', username+" : ");
+          // Ne crée un nouveau p que si le dernier n'est pas déjà vide
+          var lastP = $sp.children('p').last();
+          if (!lastP.hasClass('speech_you') || lastP.text() !== '') {
+            p = $('<p class="speech_you"></p>');
+            $sp.append(p);
+            $(".speech_you").attr('data-content', username+" : ");
+          } else {
+            p = lastP; // réutilise le p vide existant
+          }
           try {
             recognition.start();
           } catch (e) {}
