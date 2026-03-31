@@ -1,9 +1,12 @@
 #!/usr/bin/env pwsh
 Set-Location $PSScriptRoot
 
-Write-Output "Entering Virtual Env"
-./botenv/bin/Activate.ps1
+$PythonCmd = if ($IsWindows) { Join-Path $PSScriptRoot "botenv/Scripts/python.exe" } else { Join-Path $PSScriptRoot "botenv/bin/python" }
+if (-not (Test-Path $PythonCmd)) {
+  throw "Python virtual environment not found: $PythonCmd"
+}
+Write-Output "Using Python: $PythonCmd"
 
 Write-Output "Starting Editor"
 Set-Location ./Editor
-python3 ./Editor.py ../data/default_FR.json
+& $PythonCmd ./Editor.py ../data/default_FR.json

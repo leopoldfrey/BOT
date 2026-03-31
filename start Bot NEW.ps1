@@ -1,6 +1,12 @@
 #!/usr/bin/env pwsh
 [Console]::TreatControlCAsInput = $True
 
+$PythonCmd = if ($IsWindows) { Join-Path $PSScriptRoot "botenv/Scripts/python.exe" } else { Join-Path $PSScriptRoot "botenv/bin/python" }
+if (-not (Test-Path $PythonCmd)) {
+  throw "Python virtual environment not found: $PythonCmd"
+}
+Write-Output "Using Python: $PythonCmd"
+
 $host.UI.RawUI.ForegroundColor = "Green"
 Write-Output "Starting Video"
 Start-Job -Name Video -ScriptBlock {
@@ -12,21 +18,21 @@ $host.UI.RawUI.ForegroundColor = "Magenta"
 Write-Output "Starting Sound"
 Start-Job -Name Sound -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 10;
-  python ./BotSound.py
+  & $using:PythonCmd ./BotSound.py
 }
 
 $host.UI.RawUI.ForegroundColor = "cyan"
 Write-Output "Starting Server"
 Start-Job -Name Server  -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 12;
-  python ./BotServer.py
+  & $using:PythonCmd ./BotServer.py
 }
 
 $host.UI.RawUI.ForegroundColor = "Yellow"
 Write-Output "Starting Brain"
 Start-Job -Name Brain -WorkingDirectory $PSScriptRoot/Server -ScriptBlock {
   Start-Sleep -Seconds 15;
-  python ./BotBrain.py
+  & $using:PythonCmd ./BotBrain.py
 }
 
 While (Get-Job -State "Running")
