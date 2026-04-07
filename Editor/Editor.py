@@ -3,7 +3,7 @@ import os, json, webbrowser, html, sys, glob
 from bottle import post, static_file, template, Bottle, request
 from sys import platform as _platform
 from subprocess import Popen
-import requests
+#import requests
 
 sys.path.insert(0, '../Server')
 
